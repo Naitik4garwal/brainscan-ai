@@ -1,680 +1,1788 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>BrainScan AI</title>
+<meta charset="UTF-8">
 
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
+<title>BrainScan AI</title>
+
+
+<!-- =====================================================
+     TEACHABLE MACHINE / TENSORFLOW
+     DO NOT CHANGE THESE
+===================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+
+
+<style>
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+*{
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    margin:0;
+
+    font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+    background:
+    radial-gradient(
+        circle at 20% 0%,
+        #172554 0%,
+        #0b1220 38%,
+        #070c15 100%
+    );
+
+    color:#f8fafc;
+
+    min-height:100vh;
+
+}
+
+
+/* =====================================================
+   APP CONTAINER
+===================================================== */
+
+.app{
+
+    width:100%;
+
+    max-width:1050px;
+
+    margin:auto;
+
+    padding:
+    30px
+    20px
+    60px;
+
+}
+
+
+/* =====================================================
+   TOP NAVIGATION
+===================================================== */
+
+.navbar{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:45px;
+
+}
+
+.brand{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.brand-icon{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:14px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+    );
+
+    font-size:24px;
+
+    box-shadow:
+    0 8px 25px
+    rgba(37,99,235,.35);
+
+}
+
+.brand-name{
+
+    font-size:20px;
+
+    font-weight:700;
+
+    letter-spacing:-.4px;
+
+}
+
+.status-pill{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    padding:
+    8px
+    12px;
+
+    border-radius:30px;
+
+    background:
+    rgba(34,197,94,.08);
+
+    border:
+    1px solid
+    rgba(34,197,94,.2);
+
+    color:#86efac;
+
+    font-size:12px;
+
+}
+
+.status-dot{
+
+    width:7px;
+
+    height:7px;
+
+    border-radius:50%;
+
+    background:#22c55e;
+
+    box-shadow:
+    0 0 10px
+    rgba(34,197,94,.7);
+
+}
+
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.hero{
+
+    text-align:center;
+
+    margin-bottom:35px;
+
+}
+
+.hero-badge{
+
+    display:inline-block;
+
+    padding:
+    7px
+    13px;
+
+    border-radius:30px;
+
+    background:
+    rgba(37,99,235,.12);
+
+    border:
+    1px solid
+    rgba(96,165,250,.2);
+
+    color:#93c5fd;
+
+    font-size:12px;
+
+    font-weight:600;
+
+    margin-bottom:15px;
+
+}
+
+.hero h1{
+
+    font-size:
+    clamp(34px,6vw,58px);
+
+    line-height:1.05;
+
+    margin:
+    0
+    0
+    15px;
+
+    letter-spacing:
+    -2px;
+
+}
+
+.hero h1 span{
+
+    background:
+    linear-gradient(
+        90deg,
+        #60a5fa,
+        #818cf8,
+        #c084fc
+    );
+
+    -webkit-background-clip:text;
+
+    background-clip:text;
+
+    color:transparent;
+
+}
+
+.hero p{
+
+    color:#94a3b8;
+
+    max-width:600px;
+
+    margin:auto;
+
+    font-size:16px;
+
+    line-height:1.6;
+
+}
+
+
+/* =====================================================
+   MAIN GRID
+===================================================== */
+
+.main-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    1.15fr
+    .85fr;
+
+    gap:20px;
+
+}
+
+
+/* =====================================================
+   CARDS
+===================================================== */
+
+.card{
+
+    background:
+    rgba(15,23,42,.82);
+
+    border:
+    1px solid
+    rgba(148,163,184,.12);
+
+    border-radius:24px;
+
+    padding:24px;
+
+    backdrop-filter:
+    blur(20px);
+
+    box-shadow:
+    0 20px 60px
+    rgba(0,0,0,.25);
+
+}
+
+.card-header{
+
+    margin-bottom:20px;
+
+}
+
+.card-title{
+
+    font-size:18px;
+
+    font-weight:700;
+
+}
+
+.card-description{
+
+    color:#64748b;
+
+    font-size:13px;
+
+    margin-top:5px;
+
+}
+
+
+/* =====================================================
+   UPLOAD
+===================================================== */
+
+.upload-area{
+
+    position:relative;
+
+    border:
+    1.5px dashed
+    #334155;
+
+    border-radius:20px;
+
+    padding:42px 20px;
+
+    text-align:center;
+
+    transition:
+    .25s ease;
+
+    cursor:pointer;
+
+    background:
+    rgba(15,23,42,.5);
+
+}
+
+.upload-area:hover{
+
+    border-color:#3b82f6;
+
+    background:
+    rgba(37,99,235,.06);
+
+    transform:
+    translateY(-1px);
+
+}
+
+.upload-icon{
+
+    width:65px;
+
+    height:65px;
+
+    border-radius:20px;
+
+    margin:
+    0
+    auto
+    16px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:
+    #172554;
+
+    font-size:30px;
+
+}
+
+.upload-title{
+
+    font-size:16px;
+
+    font-weight:600;
+
+    margin-bottom:7px;
+
+}
+
+.upload-description{
+
+    color:#64748b;
+
+    font-size:13px;
+
+    margin-bottom:20px;
+
+}
+
+.upload-button{
+
+    display:inline-block;
+
+    padding:
+    12px
+    20px;
+
+    border-radius:12px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+    );
+
+    color:white;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 8px 25px
+    rgba(37,99,235,.25);
+
+}
+
+.upload-button:hover{
+
+    filter:brightness(1.1);
+
+}
+
+input[type="file"]{
+
+    display:none;
+
+}
+
+
+/* =====================================================
+   PREVIEW
+===================================================== */
+
+.preview-wrapper{
+
+    margin-top:18px;
+
+    display:none;
+
+}
+
+.preview-label{
+
+    font-size:12px;
+
+    color:#64748b;
+
+    margin-bottom:8px;
+
+}
+
+.preview-box{
+
+    position:relative;
+
+    overflow:hidden;
+
+    border-radius:17px;
+
+    border:
+    1px solid
+    #263449;
+
+    background:#020617;
+
+}
+
+#preview{
+
+    display:block;
+
+    width:100%;
+
+    max-height:370px;
+
+    object-fit:contain;
+
+}
+
+
+/* =====================================================
+   ANALYZE BUTTON
+===================================================== */
+
+.analyze-button{
+
+    width:100%;
+
+    border:none;
+
+    margin-top:18px;
+
+    padding:16px;
+
+    border-radius:14px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+    );
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:
+    .2s ease;
+
+}
+
+.analyze-button:hover{
+
+    transform:
+    translateY(-1px);
+
+    box-shadow:
+    0 12px 30px
+    rgba(37,99,235,.25);
+
+}
+
+.analyze-button:disabled{
+
+    background:#1e293b;
+
+    color:#64748b;
+
+    cursor:not-allowed;
+
+    transform:none;
+
+    box-shadow:none;
+
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.status{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin-top:14px;
+
+    color:#64748b;
+
+    font-size:12px;
+
+}
+
+.spinner{
+
+    width:14px;
+
+    height:14px;
+
+    border:
+    2px solid
+    #334155;
+
+    border-top-color:#60a5fa;
+
+    border-radius:50%;
+
+    animation:
+    spin .8s linear infinite;
+
+    display:none;
+
+}
+
+@keyframes spin{
+
+    to{
+        transform:rotate(360deg);
     }
 
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #0b1220;
-      color: #ffffff;
-      min-height: 100vh;
+}
+
+
+/* =====================================================
+   RESULTS
+===================================================== */
+
+.result-card{
+
+    display:none;
+
+}
+
+.result-badge{
+
+    display:inline-block;
+
+    padding:
+    6px
+    10px;
+
+    border-radius:8px;
+
+    background:
+    rgba(59,130,246,.1);
+
+    color:#60a5fa;
+
+    font-size:11px;
+
+    font-weight:700;
+
+    letter-spacing:.6px;
+
+    margin-bottom:13px;
+
+}
+
+.prediction{
+
+    font-size:
+    clamp(25px,4vw,34px);
+
+    font-weight:800;
+
+    line-height:1.15;
+
+    margin-bottom:20px;
+
+}
+
+
+/* =====================================================
+   CONFIDENCE
+===================================================== */
+
+.confidence-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:8px;
+
+    font-size:13px;
+
+}
+
+.confidence-label{
+
+    color:#94a3b8;
+
+}
+
+.confidence-value{
+
+    color:#60a5fa;
+
+    font-weight:700;
+
+}
+
+.confidence-track{
+
+    width:100%;
+
+    height:10px;
+
+    background:#1e293b;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+.confidence-fill{
+
+    width:0%;
+
+    height:100%;
+
+    border-radius:20px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #2563eb,
+        #818cf8
+    );
+
+    transition:
+    width 1s ease;
+
+}
+
+
+/* =====================================================
+   CLASS BREAKDOWN
+===================================================== */
+
+.breakdown{
+
+    margin-top:25px;
+
+}
+
+.breakdown-title{
+
+    font-size:13px;
+
+    font-weight:600;
+
+    color:#cbd5e1;
+
+    margin-bottom:13px;
+
+}
+
+.class-row{
+
+    margin-bottom:13px;
+
+}
+
+.class-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    font-size:12px;
+
+    margin-bottom:5px;
+
+}
+
+.class-name{
+
+    color:#94a3b8;
+
+}
+
+.class-percent{
+
+    color:#cbd5e1;
+
+}
+
+.class-track{
+
+    height:6px;
+
+    background:#1e293b;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+.class-fill{
+
+    height:100%;
+
+    width:0%;
+
+    background:#475569;
+
+    border-radius:20px;
+
+    transition:
+    width .7s ease;
+
+}
+
+
+/* =====================================================
+   RESET
+===================================================== */
+
+.reset-button{
+
+    width:100%;
+
+    margin-top:20px;
+
+    padding:13px;
+
+    border:
+    1px solid
+    #334155;
+
+    background:
+    transparent;
+
+    color:#94a3b8;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+}
+
+.reset-button:hover{
+
+    background:#172033;
+
+    color:white;
+
+}
+
+
+/* =====================================================
+   HOW IT WORKS
+===================================================== */
+
+.how-card{
+
+    margin-top:20px;
+
+}
+
+.how-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(3,1fr);
+
+    gap:15px;
+
+}
+
+.step{
+
+    padding:18px;
+
+    border-radius:16px;
+
+    background:
+    rgba(30,41,59,.45);
+
+    border:
+    1px solid
+    rgba(148,163,184,.08);
+
+}
+
+.step-number{
+
+    width:32px;
+
+    height:32px;
+
+    border-radius:10px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#172554;
+
+    color:#60a5fa;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    margin-bottom:12px;
+
+}
+
+.step-title{
+
+    font-size:13px;
+
+    font-weight:700;
+
+    margin-bottom:5px;
+
+}
+
+.step-text{
+
+    font-size:11px;
+
+    line-height:1.5;
+
+    color:#64748b;
+
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer{
+
+    text-align:center;
+
+    margin-top:35px;
+
+    color:#475569;
+
+    font-size:11px;
+
+    line-height:1.6;
+
+}
+
+.disclaimer{
+
+    max-width:700px;
+
+    margin:
+    0
+    auto
+    12px;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:760px){
+
+    .app{
+
+        padding:
+        20px
+        13px
+        45px;
+
     }
 
-    .app {
-      width: 100%;
-      max-width: 850px;
-      margin: auto;
-      padding: 25px 18px 40px;
-    }
+    .navbar{
 
-    /* HEADER */
-
-    .header {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-
-    .logo {
-      width: 68px;
-      height: 68px;
-      margin: auto;
-      border-radius: 20px;
-      background: #17243a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 36px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    }
-
-    .header h1 {
-      margin: 15px 0 6px;
-      font-size: 32px;
-      letter-spacing: -0.5px;
-    }
-
-    .header p {
-      margin: 0;
-      color: #9eabc0;
-      font-size: 15px;
-    }
-
-    /* CARD */
-
-    .card {
-      background: #121c2d;
-      border: 1px solid #243149;
-      border-radius: 22px;
-      padding: 22px;
-      margin-bottom: 18px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.22);
-    }
-
-    .card-title {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .card-subtitle {
-      color: #8f9db3;
-      font-size: 13px;
-      margin-bottom: 20px;
-    }
-
-    /* UPLOAD */
-
-    .upload-area {
-      border: 2px dashed #33445f;
-      border-radius: 18px;
-      padding: 28px 15px;
-      text-align: center;
-      transition: 0.2s;
-    }
-
-    .upload-area:hover {
-      border-color: #4e8cff;
-      background: #142036;
-    }
-
-    .upload-icon {
-      font-size: 38px;
-      margin-bottom: 10px;
-    }
-
-    .upload-text {
-      color: #c7d1df;
-      margin-bottom: 15px;
-      font-size: 14px;
-    }
-
-    input[type="file"] {
-      display: none;
-    }
-
-    .upload-button {
-      display: inline-block;
-      background: #2563eb;
-      color: white;
-      padding: 13px 22px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .upload-button:hover {
-      background: #3474f2;
-    }
-
-    /* IMAGE */
-
-    .preview-container {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    #preview {
-      max-width: 100%;
-      max-height: 400px;
-      border-radius: 15px;
-      border: 1px solid #293953;
-      display: none;
-      margin: auto;
-    }
-
-    /* ANALYZE BUTTON */
-
-    .analyze-button {
-      width: 100%;
-      margin-top: 20px;
-      padding: 16px;
-      border: none;
-      border-radius: 13px;
-      background: #2563eb;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .analyze-button:hover {
-      background: #3474f2;
-    }
-
-    .analyze-button:disabled {
-      background: #263650;
-      color: #71809a;
-      cursor: not-allowed;
-    }
-
-    /* RESULT */
-
-    .result-card {
-      display: none;
-    }
-
-    .result-label {
-      color: #8f9db3;
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .prediction {
-      font-size: 28px;
-      font-weight: bold;
-      margin-bottom: 18px;
-      word-wrap: break-word;
-    }
-
-    .confidence-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      color: #9eabc0;
-      margin-bottom: 7px;
-    }
-
-    .confidence-bar {
-      height: 12px;
-      background: #26344c;
-      border-radius: 20px;
-      overflow: hidden;
-    }
-
-    .confidence-fill {
-      height: 100%;
-      width: 0%;
-      background: #3b82f6;
-      border-radius: 20px;
-      transition: width 0.8s ease;
-    }
-
-    .status {
-      text-align: center;
-      color: #9eabc0;
-      font-size: 14px;
-      margin-top: 15px;
-    }
-
-    /* RESET */
-
-    .reset-button {
-      width: 100%;
-      margin-top: 15px;
-      padding: 13px;
-      border-radius: 12px;
-      border: 1px solid #33445f;
-      background: transparent;
-      color: #c5d0df;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .reset-button:hover {
-      background: #18243a;
-    }
-
-    /* DISCLAIMER */
-
-    .disclaimer {
-      text-align: center;
-      color: #6f7d92;
-      font-size: 11px;
-      line-height: 1.5;
-      margin-top: 25px;
-      padding: 0 10px;
-    }
-
-    /* MOBILE */
-
-    @media (max-width: 600px) {
-
-      .app {
-        padding: 20px 12px 30px;
-      }
-
-      .header h1 {
-        font-size: 27px;
-      }
-
-      .card {
-        padding: 17px;
-        border-radius: 18px;
-      }
-
-      .prediction {
-        font-size: 23px;
-      }
+        margin-bottom:32px;
 
     }
-  </style>
+
+    .main-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .how-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .hero{
+
+        margin-bottom:25px;
+
+    }
+
+    .hero h1{
+
+        font-size:38px;
+
+    }
+
+    .status-pill{
+
+        display:none;
+
+    }
+
+}
+
+</style>
+
 </head>
+
 
 <body>
 
+
 <div class="app">
 
-  <!-- HEADER -->
 
-  <div class="header">
+<!-- =====================================================
+     NAVIGATION
+===================================================== -->
 
-    <div class="logo">
-      🧠
-    </div>
+<div class="navbar">
 
-    <h1>BrainScan AI</h1>
+    <div class="brand">
 
-    <p>AI-powered brain scan image classification</p>
+        <div class="brand-icon">
+            🧠
+        </div>
 
-  </div>
-
-
-  <!-- UPLOAD CARD -->
-
-  <div class="card">
-
-    <div class="card-title">
-      Analyze Brain Scan
-    </div>
-
-    <div class="card-subtitle">
-      Upload an image for AI classification
-    </div>
-
-
-    <div class="upload-area">
-
-      <div class="upload-icon">
-        🖼️
-      </div>
-
-      <div class="upload-text">
-        Select a brain scan image from your device
-      </div>
-
-      <label class="upload-button" for="imageInput">
-        Select Brain Scan
-      </label>
-
-      <input
-        type="file"
-        id="imageInput"
-        accept="image/*"
-      >
+        <div class="brand-name">
+            BrainScan AI
+        </div>
 
     </div>
 
 
-    <div class="preview-container">
+    <div class="status-pill">
 
-      <img
-        id="preview"
-        alt="Brain scan preview"
-      >
+        <div class="status-dot"></div>
 
-    </div>
-
-
-    <button
-      class="analyze-button"
-      id="analyzeButton"
-      onclick="analyzeImage()"
-      disabled
-    >
-      🔍 Analyze Scan
-    </button>
-
-    <div
-      class="status"
-      id="status"
-    >
-      Select an image to begin.
+        AI MODEL ONLINE
 
     </div>
-
-  </div>
-
-
-  <!-- RESULT CARD -->
-
-  <div
-    class="card result-card"
-    id="resultCard"
-  >
-
-    <div class="result-label">
-      AI CLASSIFICATION
-    </div>
-
-    <div
-      class="prediction"
-      id="prediction"
-    >
-      —
-    </div>
-
-
-    <div class="confidence-label">
-
-      <span>
-        Confidence
-      </span>
-
-      <span id="confidenceText">
-        0%
-      </span>
-
-    </div>
-
-
-    <div class="confidence-bar">
-
-      <div
-        class="confidence-fill"
-        id="confidenceFill"
-      >
-      </div>
-
-    </div>
-
-
-    <button
-      class="reset-button"
-      onclick="resetScan()"
-    >
-      ↻ Analyze Another Scan
-    </button>
-
-  </div>
-
-
-  <!-- DISCLAIMER -->
-
-  <div class="disclaimer">
-
-    BrainScan AI is an educational research project.
-    Results are AI classifications and should not be considered
-    a medical diagnosis or a substitute for professional medical advice.
-
-  </div>
 
 </div>
 
 
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<div class="hero">
+
+    <div class="hero-badge">
+        AI-POWERED IMAGE CLASSIFICATION
+    </div>
+
+    <h1>
+        Intelligent
+        <span>Brain Scan</span>
+        Analysis
+    </h1>
+
+    <p>
+        Upload a brain scan image and let the trained
+        BrainScan AI model classify the image.
+    </p>
+
+</div>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<div class="main-grid">
+
+
+<!-- =====================================================
+     LEFT — UPLOAD
+===================================================== -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div class="card-title">
+            Analyze a Brain Scan
+        </div>
+
+        <div class="card-description">
+            Upload an image to begin AI classification.
+        </div>
+
+    </div>
+
+
+    <div
+        class="upload-area"
+        onclick="document.getElementById('imageInput').click()"
+    >
+
+        <div class="upload-icon">
+            🧠
+        </div>
+
+        <div class="upload-title">
+            Upload your scan
+        </div>
+
+        <div class="upload-description">
+            Select a brain scan image from your device
+        </div>
+
+
+        <label
+            class="upload-button"
+            onclick="event.stopPropagation()"
+            for="imageInput"
+        >
+            Choose Image
+        </label>
+
+
+        <input
+            type="file"
+            id="imageInput"
+            accept="image/*"
+        >
+
+    </div>
+
+
+    <div
+        class="preview-wrapper"
+        id="previewWrapper"
+    >
+
+        <div class="preview-label">
+            SELECTED SCAN
+        </div>
+
+        <div class="preview-box">
+
+            <img
+                id="preview"
+                alt="Brain scan preview"
+            >
+
+        </div>
+
+    </div>
+
+
+    <button
+        class="analyze-button"
+        id="analyzeButton"
+        onclick="analyzeImage()"
+        disabled
+    >
+
+        🔍 Analyze Scan
+
+    </button>
+
+
+    <div class="status">
+
+        <div
+            class="spinner"
+            id="spinner"
+        ></div>
+
+        <span id="statusText">
+            Select an image to begin.
+        </span>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     RIGHT — RESULT
+===================================================== -->
+
+<div
+    class="card result-card"
+    id="resultCard"
+>
+
+    <div class="result-badge">
+        AI CLASSIFICATION
+    </div>
+
+
+    <div
+        class="prediction"
+        id="prediction"
+    >
+        —
+    </div>
+
+
+    <div class="confidence-header">
+
+        <span class="confidence-label">
+            Model confidence
+        </span>
+
+        <span
+            class="confidence-value"
+            id="confidenceText"
+        >
+            0%
+        </span>
+
+    </div>
+
+
+    <div class="confidence-track">
+
+        <div
+            class="confidence-fill"
+            id="confidenceFill"
+        ></div>
+
+    </div>
+
+
+    <div class="breakdown">
+
+        <div class="breakdown-title">
+            Classification breakdown
+        </div>
+
+        <div id="breakdownContainer"></div>
+
+    </div>
+
+
+    <button
+        class="reset-button"
+        onclick="resetScan()"
+    >
+
+        ↻ Analyze Another Scan
+
+    </button>
+
+</div>
+
+</div>
+
+
+
+<!-- =====================================================
+     HOW IT WORKS
+===================================================== -->
+
+<div class="card how-card">
+
+    <div class="card-header">
+
+        <div class="card-title">
+            How BrainScan AI Works
+        </div>
+
+        <div class="card-description">
+            Three simple steps from image to AI classification.
+        </div>
+
+    </div>
+
+
+    <div class="how-grid">
+
+
+        <div class="step">
+
+            <div class="step-number">
+                01
+            </div>
+
+            <div class="step-title">
+                Upload
+            </div>
+
+            <div class="step-text">
+                Select a brain scan image from your device.
+            </div>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="step-number">
+                02
+            </div>
+
+            <div class="step-title">
+                Analyze
+            </div>
+
+            <div class="step-text">
+                The trained AI model processes the selected image.
+            </div>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="step-number">
+                03
+            </div>
+
+            <div class="step-title">
+                Result
+            </div>
+
+            <div class="step-text">
+                View the predicted class and model confidence.
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<div class="footer">
+
+    <div class="disclaimer">
+
+        <strong>Educational Research Project</strong><br>
+
+        BrainScan AI provides AI-based image classification
+        for educational and research purposes only.
+        It is not a medical diagnostic tool and should not
+        replace evaluation by a qualified healthcare professional.
+
+    </div>
+
+    BrainScan AI • AI Image Classification Prototype
+
+</div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     MODEL CONNECTION PRESERVED
+===================================================== -->
+
 <script>
 
-  /*
-   * YOUR EXISTING TEACHABLE MACHINE MODEL
-   * --------------------------------------
-   * The model itself has NOT been changed.
-   */
 
-  const MODEL_URL =
-    "https://teachablemachine.withgoogle.com/models/XPJn1-s88/";
+/* =====================================================
+   YOUR ORIGINAL TEACHABLE MACHINE MODEL
+   ===================================================== */
 
-
-  let model = null;
-  let imageElement = null;
+const MODEL_URL =
+"https://teachablemachine.withgoogle.com/models/XPJn1-s88/";
 
 
-  /*
-   * IMAGE SELECTION
-   */
+let model = null;
 
-  document
-    .getElementById("imageInput")
-    .addEventListener("change", function(event) {
-
-      const file = event.target.files[0];
-
-      if (!file) {
-        return;
-      }
+let imageElement = null;
 
 
-      const reader = new FileReader();
+
+/* =====================================================
+   IMAGE SELECTION
+===================================================== */
+
+document
+.getElementById("imageInput")
+.addEventListener(
+    "change",
+    function(event){
+
+        const file =
+        event.target.files[0];
 
 
-      reader.onload = function(e) {
+        if(!file){
 
-        imageElement =
-          document.getElementById("preview");
+            return;
 
-
-        imageElement.src =
-          e.target.result;
+        }
 
 
-        imageElement.style.display =
-          "block";
+        const reader =
+        new FileReader();
 
+
+        reader.onload =
+        function(e){
+
+
+            imageElement =
+            document.getElementById("preview");
+
+
+            imageElement.src =
+            e.target.result;
+
+
+            document
+            .getElementById("previewWrapper")
+            .style.display =
+            "block";
+
+
+            document
+            .getElementById("analyzeButton")
+            .disabled =
+            false;
+
+
+            document
+            .getElementById("statusText")
+            .innerText =
+            "Image ready. Tap Analyze Scan.";
+
+
+            document
+            .getElementById("resultCard")
+            .style.display =
+            "none";
+
+
+        };
+
+
+        reader.readAsDataURL(file);
+
+
+    }
+);
+
+
+
+/* =====================================================
+   ANALYZE IMAGE
+===================================================== */
+
+async function analyzeImage(){
+
+
+    if(!imageElement){
 
         document
-          .getElementById("analyzeButton")
-          .disabled = false;
-
-
-        document
-          .getElementById("status")
-          .innerText =
-          "Image ready. Tap Analyze Scan.";
-
-
-        document
-          .getElementById("resultCard")
-          .style.display =
-          "none";
-
-      };
-
-
-      reader.readAsDataURL(file);
-
-    });
-
-
-
-  /*
-   * ANALYZE IMAGE
-   */
-
-  async function analyzeImage() {
-
-
-    if (!imageElement) {
-
-      document
-        .getElementById("status")
+        .getElementById("statusText")
         .innerText =
         "Please select an image first.";
 
-      return;
+        return;
 
     }
 
 
     const button =
-      document.getElementById("analyzeButton");
+    document
+    .getElementById("analyzeButton");
 
 
-    button.disabled = true;
+    const spinner =
+    document
+    .getElementById("spinner");
+
+
+    button.disabled =
+    true;
+
+
+    spinner.style.display =
+    "block";
 
 
     document
-      .getElementById("status")
-      .innerText =
-      "Analyzing scan...";
+    .getElementById("statusText")
+    .innerText =
+    "Analyzing scan...";
 
 
-    try {
+    try{
 
 
-      /*
-       * LOAD MODEL
-       */
+        /* ==========================================
+           LOAD MODEL
+           SAME MODEL AS BEFORE
+        ========================================== */
 
-      if (!model) {
+        if(!model){
 
-        model =
-          await tmImage.load(
+            model =
+            await tmImage.load(
 
-            MODEL_URL +
-            "model.json",
+                MODEL_URL +
+                "model.json",
 
-            MODEL_URL +
-            "metadata.json"
+                MODEL_URL +
+                "metadata.json"
 
-          );
+            );
 
-      }
-
-
-      /*
-       * MAKE PREDICTION
-       */
-
-      const predictions =
-        await model.predict(imageElement);
+        }
 
 
-      /*
-       * SORT FROM HIGHEST
-       * TO LOWEST CONFIDENCE
-       */
+        /* ==========================================
+           PREDICTION
+        ========================================== */
 
-      predictions.sort(
-        (a, b) =>
-          b.probability -
-          a.probability
-      );
+        const predictions =
+        await model.predict(
+            imageElement
+        );
 
 
-      const best =
+        /* ==========================================
+           SORT PREDICTIONS
+        ========================================== */
+
+        predictions.sort(
+
+            (a,b) =>
+            b.probability -
+            a.probability
+
+        );
+
+
+        const best =
         predictions[0];
 
 
-      const confidence =
+        const confidence =
         best.probability * 100;
 
 
-      /*
-       * DISPLAY RESULT
-       */
+        /* ==========================================
+           MAIN RESULT
+        ========================================== */
 
-      document
+        document
         .getElementById("prediction")
         .innerText =
         best.className;
 
 
-      document
+        document
         .getElementById("confidenceText")
         .innerText =
-        confidence.toFixed(1) + "%";
+        confidence.toFixed(1) +
+        "%";
 
 
-      document
+        document
         .getElementById("confidenceFill")
         .style.width =
-        confidence + "%";
+        confidence +
+        "%";
 
 
-      document
+        document
         .getElementById("resultCard")
         .style.display =
         "block";
 
 
-      document
-        .getElementById("status")
+        /* ==========================================
+           CLASSIFICATION BREAKDOWN
+        ========================================== */
+
+        const container =
+        document
+        .getElementById(
+            "breakdownContainer"
+        );
+
+
+        container.innerHTML = "";
+
+
+        predictions.forEach(
+
+            prediction => {
+
+
+                const percentage =
+                prediction.probability *
+                100;
+
+
+                const row =
+                document.createElement(
+                    "div"
+                );
+
+
+                row.className =
+                "class-row";
+
+
+                row.innerHTML = `
+
+                    <div class="class-top">
+
+                        <span class="class-name">
+                            ${prediction.className}
+                        </span>
+
+                        <span class="class-percent">
+                            ${percentage.toFixed(1)}%
+                        </span>
+
+                    </div>
+
+                    <div class="class-track">
+
+                        <div
+                            class="class-fill"
+                            style="width:${percentage}%"
+                        ></div>
+
+                    </div>
+
+                `;
+
+
+                container.appendChild(row);
+
+
+            }
+
+        );
+
+
+        document
+        .getElementById("statusText")
         .innerText =
         "Analysis complete.";
 
 
     }
 
-    catch (error) {
 
-      console.error(error);
+    catch(error){
 
 
-      document
-        .getElementById("status")
+        console.error(error);
+
+
+        document
+        .getElementById("statusText")
         .innerText =
         "Unable to analyze this image. Please try again.";
+
 
     }
 
 
-    button.disabled = false;
-
-  }
-
+    spinner.style.display =
+    "none";
 
 
-  /*
-   * RESET
-   */
-
-  function resetScan() {
+    button.disabled =
+    false;
 
 
-    document
-      .getElementById("imageInput")
-      .value = "";
+}
 
 
-    imageElement = null;
+
+/* =====================================================
+   RESET
+===================================================== */
+
+function resetScan(){
 
 
     document
-      .getElementById("preview")
-      .style.display =
-      "none";
+    .getElementById("imageInput")
+    .value =
+    "";
+
+
+    imageElement =
+    null;
 
 
     document
-      .getElementById("analyzeButton")
-      .disabled = true;
+    .getElementById("previewWrapper")
+    .style.display =
+    "none";
 
 
     document
-      .getElementById("resultCard")
-      .style.display =
-      "none";
+    .getElementById("resultCard")
+    .style.display =
+    "none";
 
 
     document
-      .getElementById("status")
-      .innerText =
-      "Select an image to begin.";
+    .getElementById("analyzeButton")
+    .disabled =
+    true;
 
-  }
+
+    document
+    .getElementById("statusText")
+    .innerText =
+    "Select an image to begin.";
+
+
+    document
+    .getElementById("confidenceFill")
+    .style.width =
+    "0%";
+
+
+    document
+    .getElementById("breakdownContainer")
+    .innerHTML =
+    "";
+
+}
+
 
 </script>
 
+
 </body>
+
 </html>
