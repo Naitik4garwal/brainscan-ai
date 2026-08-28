@@ -1,134 +1,678 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>BrainScan AI</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0b1220;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 850px;
+      margin: auto;
+      padding: 25px 18px 40px;
+    }
+
+    /* HEADER */
+
+    .header {
       text-align: center;
-      margin: 20px;
+      margin-bottom: 28px;
+    }
+
+    .logo {
+      width: 68px;
+      height: 68px;
+      margin: auto;
+      border-radius: 20px;
+      background: #17243a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .header h1 {
+      margin: 15px 0 6px;
+      font-size: 32px;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      margin: 0;
+      color: #9eabc0;
+      font-size: 15px;
+    }
+
+    /* CARD */
+
+    .card {
+      background: #121c2d;
+      border: 1px solid #243149;
+      border-radius: 22px;
+      padding: 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.22);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .card-subtitle {
+      color: #8f9db3;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    /* UPLOAD */
+
+    .upload-area {
+      border: 2px dashed #33445f;
+      border-radius: 18px;
+      padding: 28px 15px;
+      text-align: center;
+      transition: 0.2s;
+    }
+
+    .upload-area:hover {
+      border-color: #4e8cff;
+      background: #142036;
+    }
+
+    .upload-icon {
+      font-size: 38px;
+      margin-bottom: 10px;
+    }
+
+    .upload-text {
+      color: #c7d1df;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .upload-button {
+      display: inline-block;
+      background: #2563eb;
+      color: white;
+      padding: 13px 22px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .upload-button:hover {
+      background: #3474f2;
+    }
+
+    /* IMAGE */
+
+    .preview-container {
+      text-align: center;
+      margin-top: 20px;
     }
 
     #preview {
-      max-width: 90%;
-      max-height: 300px;
-      margin: 15px;
+      max-width: 100%;
+      max-height: 400px;
+      border-radius: 15px;
+      border: 1px solid #293953;
+      display: none;
+      margin: auto;
     }
 
-    #result {
-      font-size: 22px;
-      font-weight: bold;
+    /* ANALYZE BUTTON */
+
+    .analyze-button {
+      width: 100%;
       margin-top: 20px;
+      padding: 16px;
+      border: none;
+      border-radius: 13px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .analyze-button:hover {
+      background: #3474f2;
+    }
+
+    .analyze-button:disabled {
+      background: #263650;
+      color: #71809a;
+      cursor: not-allowed;
+    }
+
+    /* RESULT */
+
+    .result-card {
+      display: none;
+    }
+
+    .result-label {
+      color: #8f9db3;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .prediction {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 18px;
+      word-wrap: break-word;
+    }
+
+    .confidence-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #9eabc0;
+      margin-bottom: 7px;
+    }
+
+    .confidence-bar {
+      height: 12px;
+      background: #26344c;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      width: 0%;
+      background: #3b82f6;
+      border-radius: 20px;
+      transition: width 0.8s ease;
+    }
+
+    .status {
+      text-align: center;
+      color: #9eabc0;
+      font-size: 14px;
+      margin-top: 15px;
+    }
+
+    /* RESET */
+
+    .reset-button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 13px;
+      border-radius: 12px;
+      border: 1px solid #33445f;
+      background: transparent;
+      color: #c5d0df;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .reset-button:hover {
+      background: #18243a;
+    }
+
+    /* DISCLAIMER */
+
+    .disclaimer {
+      text-align: center;
+      color: #6f7d92;
+      font-size: 11px;
+      line-height: 1.5;
+      margin-top: 25px;
+      padding: 0 10px;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 600px) {
+
+      .app {
+        padding: 20px 12px 30px;
+      }
+
+      .header h1 {
+        font-size: 27px;
+      }
+
+      .card {
+        padding: 17px;
+        border-radius: 18px;
+      }
+
+      .prediction {
+        font-size: 23px;
+      }
+
     }
   </style>
 </head>
 
 <body>
 
-<h2>BrainScan AI</h2>
+<div class="app">
 
-<input type="file" id="imageInput" accept="image/*">
+  <!-- HEADER -->
 
-<br>
+  <div class="header">
 
-<img id="preview" style="display:none;">
+    <div class="logo">
+      🧠
+    </div>
 
-<br>
+    <h1>BrainScan AI</h1>
 
-<button onclick="analyzeImage()">Analyze Scan</button>
+    <p>AI-powered brain scan image classification</p>
 
-<div id="result">Select a brain scan.</div>
+  </div>
+
+
+  <!-- UPLOAD CARD -->
+
+  <div class="card">
+
+    <div class="card-title">
+      Analyze Brain Scan
+    </div>
+
+    <div class="card-subtitle">
+      Upload an image for AI classification
+    </div>
+
+
+    <div class="upload-area">
+
+      <div class="upload-icon">
+        🖼️
+      </div>
+
+      <div class="upload-text">
+        Select a brain scan image from your device
+      </div>
+
+      <label class="upload-button" for="imageInput">
+        Select Brain Scan
+      </label>
+
+      <input
+        type="file"
+        id="imageInput"
+        accept="image/*"
+      >
+
+    </div>
+
+
+    <div class="preview-container">
+
+      <img
+        id="preview"
+        alt="Brain scan preview"
+      >
+
+    </div>
+
+
+    <button
+      class="analyze-button"
+      id="analyzeButton"
+      onclick="analyzeImage()"
+      disabled
+    >
+      🔍 Analyze Scan
+    </button>
+
+    <div
+      class="status"
+      id="status"
+    >
+      Select an image to begin.
+
+    </div>
+
+  </div>
+
+
+  <!-- RESULT CARD -->
+
+  <div
+    class="card result-card"
+    id="resultCard"
+  >
+
+    <div class="result-label">
+      AI CLASSIFICATION
+    </div>
+
+    <div
+      class="prediction"
+      id="prediction"
+    >
+      —
+    </div>
+
+
+    <div class="confidence-label">
+
+      <span>
+        Confidence
+      </span>
+
+      <span id="confidenceText">
+        0%
+      </span>
+
+    </div>
+
+
+    <div class="confidence-bar">
+
+      <div
+        class="confidence-fill"
+        id="confidenceFill"
+      >
+      </div>
+
+    </div>
+
+
+    <button
+      class="reset-button"
+      onclick="resetScan()"
+    >
+      ↻ Analyze Another Scan
+    </button>
+
+  </div>
+
+
+  <!-- DISCLAIMER -->
+
+  <div class="disclaimer">
+
+    BrainScan AI is an educational research project.
+    Results are AI classifications and should not be considered
+    a medical diagnosis or a substitute for professional medical advice.
+
+  </div>
+
+</div>
+
 
 <script>
 
-const MODEL_URL =
-  "https://teachablemachine.withgoogle.com/models/XPJn1-s88/";
+  /*
+   * YOUR EXISTING TEACHABLE MACHINE MODEL
+   * --------------------------------------
+   * The model itself has NOT been changed.
+   */
 
-let model;
-let imageElement;
-
-document.getElementById("imageInput").addEventListener("change", function(event) {
-
-  const file = event.target.files[0];
-
-  if (!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = function(e) {
-
-    imageElement = document.getElementById("preview");
-
-    imageElement.src = e.target.result;
-
-    imageElement.style.display = "block";
-
-    document.getElementById("result").innerText =
-      "Image selected. Tap Analyze Scan.";
-
-  };
-
-  reader.readAsDataURL(file);
-
-});
+  const MODEL_URL =
+    "https://teachablemachine.withgoogle.com/models/XPJn1-s88/";
 
 
-async function analyzeImage() {
+  let model = null;
+  let imageElement = null;
 
-  if (!imageElement) {
 
-    document.getElementById("result").innerText =
-      "Please select an image first.";
+  /*
+   * IMAGE SELECTION
+   */
 
-    return;
+  document
+    .getElementById("imageInput")
+    .addEventListener("change", function(event) {
 
-  }
+      const file = event.target.files[0];
 
-  document.getElementById("result").innerText =
-    "Analyzing...";
+      if (!file) {
+        return;
+      }
 
-  try {
 
-    if (!model) {
+      const reader = new FileReader();
 
-      model = await tmImage.load(
-        MODEL_URL + "model.json",
-        MODEL_URL + "metadata.json"
-      );
+
+      reader.onload = function(e) {
+
+        imageElement =
+          document.getElementById("preview");
+
+
+        imageElement.src =
+          e.target.result;
+
+
+        imageElement.style.display =
+          "block";
+
+
+        document
+          .getElementById("analyzeButton")
+          .disabled = false;
+
+
+        document
+          .getElementById("status")
+          .innerText =
+          "Image ready. Tap Analyze Scan.";
+
+
+        document
+          .getElementById("resultCard")
+          .style.display =
+          "none";
+
+      };
+
+
+      reader.readAsDataURL(file);
+
+    });
+
+
+
+  /*
+   * ANALYZE IMAGE
+   */
+
+  async function analyzeImage() {
+
+
+    if (!imageElement) {
+
+      document
+        .getElementById("status")
+        .innerText =
+        "Please select an image first.";
+
+      return;
 
     }
 
-    const predictions =
-      await model.predict(imageElement);
 
-    predictions.sort(
-      (a, b) => b.probability - a.probability
-    );
+    const button =
+      document.getElementById("analyzeButton");
 
-    const best = predictions[0];
 
-    document.getElementById("result").innerText =
-      "Prediction: " +
-      best.className +
-      " (" +
-      (best.probability * 100).toFixed(1) +
-      "%)";
+    button.disabled = true;
 
-  } catch (error) {
 
-    console.error(error);
+    document
+      .getElementById("status")
+      .innerText =
+      "Analyzing scan...";
 
-    document.getElementById("result").innerText =
-      "Error loading the AI model.";
+
+    try {
+
+
+      /*
+       * LOAD MODEL
+       */
+
+      if (!model) {
+
+        model =
+          await tmImage.load(
+
+            MODEL_URL +
+            "model.json",
+
+            MODEL_URL +
+            "metadata.json"
+
+          );
+
+      }
+
+
+      /*
+       * MAKE PREDICTION
+       */
+
+      const predictions =
+        await model.predict(imageElement);
+
+
+      /*
+       * SORT FROM HIGHEST
+       * TO LOWEST CONFIDENCE
+       */
+
+      predictions.sort(
+        (a, b) =>
+          b.probability -
+          a.probability
+      );
+
+
+      const best =
+        predictions[0];
+
+
+      const confidence =
+        best.probability * 100;
+
+
+      /*
+       * DISPLAY RESULT
+       */
+
+      document
+        .getElementById("prediction")
+        .innerText =
+        best.className;
+
+
+      document
+        .getElementById("confidenceText")
+        .innerText =
+        confidence.toFixed(1) + "%";
+
+
+      document
+        .getElementById("confidenceFill")
+        .style.width =
+        confidence + "%";
+
+
+      document
+        .getElementById("resultCard")
+        .style.display =
+        "block";
+
+
+      document
+        .getElementById("status")
+        .innerText =
+        "Analysis complete.";
+
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+
+      document
+        .getElementById("status")
+        .innerText =
+        "Unable to analyze this image. Please try again.";
+
+    }
+
+
+    button.disabled = false;
 
   }
 
-}
+
+
+  /*
+   * RESET
+   */
+
+  function resetScan() {
+
+
+    document
+      .getElementById("imageInput")
+      .value = "";
+
+
+    imageElement = null;
+
+
+    document
+      .getElementById("preview")
+      .style.display =
+      "none";
+
+
+    document
+      .getElementById("analyzeButton")
+      .disabled = true;
+
+
+    document
+      .getElementById("resultCard")
+      .style.display =
+      "none";
+
+
+    document
+      .getElementById("status")
+      .innerText =
+      "Select an image to begin.";
+
+  }
 
 </script>
 
