@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BrainScan AI</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+
+    #preview {
+      max-width: 90%;
+      max-height: 300px;
+      margin: 15px;
+    }
+
+    #result {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>BrainScan AI</h2>
+
+<input type="file" id="imageInput" accept="image/*">
+
+<br>
+
+<img id="preview" style="display:none;">
+
+<br>
+
+<button onclick="analyzeImage()">Analyze Scan</button>
+
+<div id="result">Select a brain scan.</div>
+
+<script>
+
+const MODEL_URL =
+  "https://teachablemachine.withgoogle.com/models/XPJn1-s88/";
+
+let model;
+let imageElement;
+
+document.getElementById("imageInput").addEventListener("change", function(event) {
+
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+
+    imageElement = document.getElementById("preview");
+
+    imageElement.src = e.target.result;
+
+    imageElement.style.display = "block";
+
+    document.getElementById("result").innerText =
+      "Image selected. Tap Analyze Scan.";
+
+  };
+
+  reader.readAsDataURL(file);
+
+});
+
+
+async function analyzeImage() {
+
+  if (!imageElement) {
+
+    document.getElementById("result").innerText =
+      "Please select an image first.";
+
+    return;
+
+  }
+
+  document.getElementById("result").innerText =
+    "Analyzing...";
+
+  try {
+
+    if (!model) {
+
+      model = await tmImage.load(
+        MODEL_URL + "model.json",
+        MODEL_URL + "metadata.json"
+      );
+
+    }
+
+    const predictions =
+      await model.predict(imageElement);
+
+    predictions.sort(
+      (a, b) => b.probability - a.probability
+    );
+
+    const best = predictions[0];
+
+    document.getElementById("result").innerText =
+      "Prediction: " +
+      best.className +
+      " (" +
+      (best.probability * 100).toFixed(1) +
+      "%)";
+
+  } catch (error) {
+
+    console.error(error);
+
+    document.getElementById("result").innerText =
+      "Error loading the AI model.";
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
