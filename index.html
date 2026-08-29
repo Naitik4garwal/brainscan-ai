@@ -2,1041 +2,884 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>BrainScan AI</title>
 
-
-<!-- =====================================================
-     TEACHABLE MACHINE / TENSORFLOW
-     DO NOT CHANGE THESE
-===================================================== -->
-
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
-
 
 <style>
 
-/* =====================================================
-   GLOBAL
-===================================================== */
-
-*{
-    box-sizing:border-box;
+* {
+    box-sizing: border-box;
 }
 
-html{
-    scroll-behavior:smooth;
+html {
+    scroll-behavior: smooth;
 }
 
-body{
-
-    margin:0;
-
-    font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Arial,
-    sans-serif;
-
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
     background:
-    radial-gradient(
-        circle at 20% 0%,
-        #172554 0%,
-        #0b1220 38%,
-        #070c15 100%
-    );
-
-    color:#f8fafc;
-
-    min-height:100vh;
-
+        radial-gradient(circle at 20% 0%, #172554 0%, #0b1220 38%, #070c15 100%);
+    color: #f8fafc;
+    min-height: 100vh;
 }
 
 
-/* =====================================================
-   APP CONTAINER
-===================================================== */
+/* =========================
+   APP
+========================= */
 
-.app{
-
-    width:100%;
-
-    max-width:1050px;
-
-    margin:auto;
-
-    padding:
-    30px
-    20px
-    60px;
-
+.app {
+    width: 100%;
+    max-width: 1050px;
+    margin: auto;
+    padding: 25px 20px 60px;
 }
 
 
-/* =====================================================
-   TOP NAVIGATION
-===================================================== */
+/* =========================
+   NAVIGATION
+========================= */
 
-.navbar{
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    margin-bottom:45px;
-
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
 }
 
-.brand{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
-
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.brand-icon{
+.brand-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 14px;
 
-    width:45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    height:45px;
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
 
-    border-radius:14px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    background:
-    linear-gradient(
-        135deg,
-        #2563eb,
-        #4f46e5
-    );
-
-    font-size:24px;
+    font-size: 24px;
 
     box-shadow:
-    0 8px 25px
-    rgba(37,99,235,.35);
-
+        0 8px 25px rgba(37,99,235,.35);
 }
 
-.brand-name{
-
-    font-size:20px;
-
-    font-weight:700;
-
-    letter-spacing:-.4px;
-
+.brand-name {
+    font-size: 20px;
+    font-weight: 700;
 }
 
-.status-pill{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:7px;
-
-    padding:
-    8px
-    12px;
-
-    border-radius:30px;
-
-    background:
-    rgba(34,197,94,.08);
-
-    border:
-    1px solid
-    rgba(34,197,94,.2);
-
-    color:#86efac;
-
-    font-size:12px;
-
+.nav-buttons {
+    display: flex;
+    gap: 8px;
 }
 
-.status-dot{
+.nav-button {
+    border: 1px solid transparent;
+    background: transparent;
+    color: #94a3b8;
 
-    width:7px;
+    padding: 9px 14px;
 
-    height:7px;
+    border-radius: 10px;
 
-    border-radius:50%;
+    cursor: pointer;
 
-    background:#22c55e;
+    font-size: 13px;
+    font-weight: 600;
+}
 
-    box-shadow:
-    0 0 10px
-    rgba(34,197,94,.7);
+.nav-button:hover {
+    background: #172033;
+    color: white;
+}
 
+.nav-button.active {
+    background: #172554;
+    color: #60a5fa;
+
+    border-color: #263c69;
 }
 
 
-/* =====================================================
+/* =========================
+   PAGES
+========================= */
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+
+/* =========================
    HERO
-===================================================== */
+========================= */
 
-.hero{
-
-    text-align:center;
-
-    margin-bottom:35px;
-
+.hero {
+    text-align: center;
+    margin-bottom: 35px;
 }
 
-.hero-badge{
+.hero-badge {
+    display: inline-block;
 
-    display:inline-block;
+    padding: 7px 13px;
 
-    padding:
-    7px
-    13px;
+    border-radius: 30px;
 
-    border-radius:30px;
+    background: rgba(37,99,235,.12);
 
+    border: 1px solid rgba(96,165,250,.2);
+
+    color: #93c5fd;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    margin-bottom: 15px;
+}
+
+.hero h1 {
+    font-size: clamp(34px,6vw,58px);
+
+    line-height: 1.05;
+
+    margin: 0 0 15px;
+
+    letter-spacing: -2px;
+}
+
+.hero h1 span {
     background:
-    rgba(37,99,235,.12);
+        linear-gradient(
+            90deg,
+            #60a5fa,
+            #818cf8,
+            #c084fc
+        );
 
-    border:
-    1px solid
-    rgba(96,165,250,.2);
+    -webkit-background-clip: text;
+    background-clip: text;
 
-    color:#93c5fd;
-
-    font-size:12px;
-
-    font-weight:600;
-
-    margin-bottom:15px;
-
+    color: transparent;
 }
 
-.hero h1{
+.hero p {
+    color: #94a3b8;
 
-    font-size:
-    clamp(34px,6vw,58px);
+    max-width: 600px;
 
-    line-height:1.05;
+    margin: auto;
 
-    margin:
-    0
-    0
-    15px;
+    font-size: 16px;
 
-    letter-spacing:
-    -2px;
-
-}
-
-.hero h1 span{
-
-    background:
-    linear-gradient(
-        90deg,
-        #60a5fa,
-        #818cf8,
-        #c084fc
-    );
-
-    -webkit-background-clip:text;
-
-    background-clip:text;
-
-    color:transparent;
-
-}
-
-.hero p{
-
-    color:#94a3b8;
-
-    max-width:600px;
-
-    margin:auto;
-
-    font-size:16px;
-
-    line-height:1.6;
-
+    line-height: 1.6;
 }
 
 
-/* =====================================================
-   MAIN GRID
-===================================================== */
+/* =========================
+   GRID
+========================= */
 
-.main-grid{
-
-    display:grid;
+.main-grid {
+    display: grid;
 
     grid-template-columns:
-    1.15fr
-    .85fr;
+        1.15fr
+        .85fr;
 
-    gap:20px;
-
+    gap: 20px;
 }
 
 
-/* =====================================================
-   CARDS
-===================================================== */
+/* =========================
+   CARD
+========================= */
 
-.card{
-
-    background:
-    rgba(15,23,42,.82);
+.card {
+    background: rgba(15,23,42,.82);
 
     border:
-    1px solid
-    rgba(148,163,184,.12);
+        1px solid
+        rgba(148,163,184,.12);
 
-    border-radius:24px;
+    border-radius: 24px;
 
-    padding:24px;
+    padding: 24px;
 
-    backdrop-filter:
-    blur(20px);
+    backdrop-filter: blur(20px);
 
     box-shadow:
-    0 20px 60px
-    rgba(0,0,0,.25);
-
+        0 20px 60px rgba(0,0,0,.25);
 }
 
-.card-header{
-
-    margin-bottom:20px;
-
+.card-title {
+    font-size: 18px;
+    font-weight: 700;
 }
 
-.card-title{
+.card-description {
+    color: #64748b;
 
-    font-size:18px;
+    font-size: 13px;
 
-    font-weight:700;
+    margin-top: 5px;
 
-}
-
-.card-description{
-
-    color:#64748b;
-
-    font-size:13px;
-
-    margin-top:5px;
-
+    margin-bottom: 20px;
 }
 
 
-/* =====================================================
+/* =========================
    UPLOAD
-===================================================== */
+========================= */
 
-.upload-area{
-
-    position:relative;
-
+.upload-area {
     border:
-    1.5px dashed
-    #334155;
+        1.5px dashed
+        #334155;
 
-    border-radius:20px;
+    border-radius: 20px;
 
-    padding:42px 20px;
+    padding: 42px 20px;
 
-    text-align:center;
+    text-align: center;
 
-    transition:
-    .25s ease;
+    cursor: pointer;
 
-    cursor:pointer;
+    transition: .25s ease;
+}
+
+.upload-area:hover {
+    border-color: #3b82f6;
+
+    background: rgba(37,99,235,.06);
+}
+
+.upload-icon {
+    width: 65px;
+    height: 65px;
+
+    border-radius: 20px;
+
+    margin: 0 auto 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #172554;
+
+    font-size: 30px;
+}
+
+.upload-title {
+    font-size: 16px;
+    font-weight: 600;
+
+    margin-bottom: 7px;
+}
+
+.upload-description {
+    color: #64748b;
+
+    font-size: 13px;
+
+    margin-bottom: 20px;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.upload-button {
+    display: inline-block;
+
+    padding: 12px 20px;
+
+    border-radius: 12px;
 
     background:
-    rgba(15,23,42,.5);
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #4f46e5
+        );
 
-}
+    color: white;
 
-.upload-area:hover{
+    font-size: 14px;
+    font-weight: 600;
 
-    border-color:#3b82f6;
-
-    background:
-    rgba(37,99,235,.06);
-
-    transform:
-    translateY(-1px);
-
-}
-
-.upload-icon{
-
-    width:65px;
-
-    height:65px;
-
-    border-radius:20px;
-
-    margin:
-    0
-    auto
-    16px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    background:
-    #172554;
-
-    font-size:30px;
-
-}
-
-.upload-title{
-
-    font-size:16px;
-
-    font-weight:600;
-
-    margin-bottom:7px;
-
-}
-
-.upload-description{
-
-    color:#64748b;
-
-    font-size:13px;
-
-    margin-bottom:20px;
-
-}
-
-.upload-button{
-
-    display:inline-block;
-
-    padding:
-    12px
-    20px;
-
-    border-radius:12px;
-
-    background:
-    linear-gradient(
-        135deg,
-        #2563eb,
-        #4f46e5
-    );
-
-    color:white;
-
-    font-size:14px;
-
-    font-weight:600;
-
-    cursor:pointer;
-
-    box-shadow:
-    0 8px 25px
-    rgba(37,99,235,.25);
-
-}
-
-.upload-button:hover{
-
-    filter:brightness(1.1);
-
-}
-
-input[type="file"]{
-
-    display:none;
-
+    cursor: pointer;
 }
 
 
-/* =====================================================
+/* =========================
    PREVIEW
-===================================================== */
+========================= */
 
-.preview-wrapper{
+.preview-wrapper {
+    margin-top: 18px;
 
-    margin-top:18px;
-
-    display:none;
-
+    display: none;
 }
 
-.preview-label{
+.preview-label {
+    font-size: 12px;
 
-    font-size:12px;
+    color: #64748b;
 
-    color:#64748b;
-
-    margin-bottom:8px;
-
+    margin-bottom: 8px;
 }
 
-.preview-box{
+.preview-box {
+    overflow: hidden;
 
-    position:relative;
+    border-radius: 17px;
 
-    overflow:hidden;
+    border: 1px solid #263449;
 
-    border-radius:17px;
-
-    border:
-    1px solid
-    #263449;
-
-    background:#020617;
-
+    background: #020617;
 }
 
-#preview{
+#preview {
+    display: block;
 
-    display:block;
+    width: 100%;
 
-    width:100%;
+    max-height: 370px;
 
-    max-height:370px;
-
-    object-fit:contain;
-
+    object-fit: contain;
 }
 
 
-/* =====================================================
-   ANALYZE BUTTON
-===================================================== */
+/* =========================
+   BUTTON
+========================= */
 
-.analyze-button{
+.analyze-button {
+    width: 100%;
 
-    width:100%;
+    border: none;
 
-    border:none;
+    margin-top: 18px;
 
-    margin-top:18px;
+    padding: 16px;
 
-    padding:16px;
-
-    border-radius:14px;
+    border-radius: 14px;
 
     background:
-    linear-gradient(
-        135deg,
-        #2563eb,
-        #4f46e5
-    );
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #4f46e5
+        );
 
-    color:white;
+    color: white;
 
-    font-size:15px;
+    font-size: 15px;
 
-    font-weight:700;
+    font-weight: 700;
 
-    cursor:pointer;
-
-    transition:
-    .2s ease;
-
+    cursor: pointer;
 }
 
-.analyze-button:hover{
+.analyze-button:disabled {
+    background: #1e293b;
 
-    transform:
-    translateY(-1px);
+    color: #64748b;
 
-    box-shadow:
-    0 12px 30px
-    rgba(37,99,235,.25);
-
-}
-
-.analyze-button:disabled{
-
-    background:#1e293b;
-
-    color:#64748b;
-
-    cursor:not-allowed;
-
-    transform:none;
-
-    box-shadow:none;
-
+    cursor: not-allowed;
 }
 
 
-/* =====================================================
+/* =========================
    STATUS
-===================================================== */
+========================= */
 
-.status{
+.status {
+    display: flex;
 
-    display:flex;
+    justify-content: center;
+    align-items: center;
 
-    justify-content:center;
+    gap: 8px;
 
-    align-items:center;
+    margin-top: 14px;
 
-    gap:8px;
+    color: #64748b;
 
-    margin-top:14px;
-
-    color:#64748b;
-
-    font-size:12px;
-
+    font-size: 12px;
 }
 
-.spinner{
-
-    width:14px;
-
-    height:14px;
+.spinner {
+    width: 14px;
+    height: 14px;
 
     border:
-    2px solid
-    #334155;
+        2px solid
+        #334155;
 
-    border-top-color:#60a5fa;
+    border-top-color: #60a5fa;
 
-    border-radius:50%;
+    border-radius: 50%;
 
-    animation:
-    spin .8s linear infinite;
+    animation: spin .8s linear infinite;
 
-    display:none;
-
+    display: none;
 }
 
-@keyframes spin{
-
-    to{
-        transform:rotate(360deg);
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
-
 }
 
 
-/* =====================================================
+/* =========================
    RESULTS
-===================================================== */
+========================= */
 
-.result-card{
-
-    display:none;
-
+.result-card {
+    display: none;
 }
 
-.result-badge{
+.result-badge {
+    display: inline-block;
 
-    display:inline-block;
+    padding: 6px 10px;
 
-    padding:
-    6px
-    10px;
+    border-radius: 8px;
 
-    border-radius:8px;
+    background: rgba(59,130,246,.1);
 
-    background:
-    rgba(59,130,246,.1);
+    color: #60a5fa;
 
-    color:#60a5fa;
+    font-size: 11px;
 
-    font-size:11px;
+    font-weight: 700;
 
-    font-weight:700;
+    letter-spacing: .6px;
 
-    letter-spacing:.6px;
-
-    margin-bottom:13px;
-
+    margin-bottom: 13px;
 }
 
-.prediction{
+.prediction {
+    font-size: 32px;
 
-    font-size:
-    clamp(25px,4vw,34px);
+    font-weight: 800;
 
-    font-weight:800;
+    line-height: 1.15;
 
-    line-height:1.15;
-
-    margin-bottom:20px;
-
+    margin-bottom: 20px;
 }
 
 
-/* =====================================================
+/* =========================
    CONFIDENCE
-===================================================== */
+========================= */
 
-.confidence-header{
+.confidence-header {
+    display: flex;
 
-    display:flex;
+    justify-content: space-between;
 
-    justify-content:space-between;
+    margin-bottom: 8px;
 
-    margin-bottom:8px;
-
-    font-size:13px;
-
+    font-size: 13px;
 }
 
-.confidence-label{
-
-    color:#94a3b8;
-
+.confidence-label {
+    color: #94a3b8;
 }
 
-.confidence-value{
+.confidence-value {
+    color: #60a5fa;
 
-    color:#60a5fa;
-
-    font-weight:700;
-
+    font-weight: 700;
 }
 
-.confidence-track{
+.confidence-track {
+    width: 100%;
 
-    width:100%;
+    height: 10px;
 
-    height:10px;
+    background: #1e293b;
 
-    background:#1e293b;
+    border-radius: 20px;
 
-    border-radius:20px;
-
-    overflow:hidden;
-
+    overflow: hidden;
 }
 
-.confidence-fill{
+.confidence-fill {
+    width: 0%;
 
-    width:0%;
+    height: 100%;
 
-    height:100%;
-
-    border-radius:20px;
+    border-radius: 20px;
 
     background:
-    linear-gradient(
-        90deg,
-        #2563eb,
-        #818cf8
-    );
+        linear-gradient(
+            90deg,
+            #2563eb,
+            #818cf8
+        );
 
-    transition:
-    width 1s ease;
-
+    transition: width 1s ease;
 }
 
 
-/* =====================================================
-   CLASS BREAKDOWN
-===================================================== */
+/* =========================
+   BREAKDOWN
+========================= */
 
-.breakdown{
-
-    margin-top:25px;
-
+.breakdown {
+    margin-top: 25px;
 }
 
-.breakdown-title{
+.breakdown-title {
+    font-size: 13px;
 
-    font-size:13px;
+    font-weight: 600;
 
-    font-weight:600;
+    color: #cbd5e1;
 
-    color:#cbd5e1;
-
-    margin-bottom:13px;
-
+    margin-bottom: 13px;
 }
 
-.class-row{
-
-    margin-bottom:13px;
-
+.class-row {
+    margin-bottom: 13px;
 }
 
-.class-top{
+.class-top {
+    display: flex;
 
-    display:flex;
+    justify-content: space-between;
 
-    justify-content:space-between;
+    font-size: 12px;
 
-    font-size:12px;
-
-    margin-bottom:5px;
-
+    margin-bottom: 5px;
 }
 
-.class-name{
-
-    color:#94a3b8;
-
+.class-name {
+    color: #94a3b8;
 }
 
-.class-percent{
-
-    color:#cbd5e1;
-
+.class-percent {
+    color: #cbd5e1;
 }
 
-.class-track{
+.class-track {
+    height: 6px;
 
-    height:6px;
+    background: #1e293b;
 
-    background:#1e293b;
+    border-radius: 20px;
 
-    border-radius:20px;
-
-    overflow:hidden;
-
+    overflow: hidden;
 }
 
-.class-fill{
+.class-fill {
+    height: 100%;
 
-    height:100%;
+    width: 0%;
 
-    width:0%;
+    background: #475569;
 
-    background:#475569;
+    border-radius: 20px;
 
-    border-radius:20px;
-
-    transition:
-    width .7s ease;
-
+    transition: width .7s ease;
 }
 
 
-/* =====================================================
+/* =========================
    RESET
-===================================================== */
+========================= */
 
-.reset-button{
+.reset-button {
+    width: 100%;
 
-    width:100%;
+    margin-top: 20px;
 
-    margin-top:20px;
-
-    padding:13px;
+    padding: 13px;
 
     border:
-    1px solid
-    #334155;
+        1px solid
+        #334155;
 
-    background:
-    transparent;
+    background: transparent;
 
-    color:#94a3b8;
+    color: #94a3b8;
 
-    border-radius:12px;
+    border-radius: 12px;
 
-    cursor:pointer;
+    cursor: pointer;
 
-    font-weight:600;
-
+    font-weight: 600;
 }
 
-.reset-button:hover{
+.reset-button:hover {
+    background: #172033;
 
-    background:#172033;
-
-    color:white;
-
+    color: white;
 }
 
 
-/* =====================================================
+/* =========================
    HOW IT WORKS
-===================================================== */
+========================= */
 
-.how-card{
-
-    margin-top:20px;
-
+.how-card {
+    margin-top: 20px;
 }
 
-.how-grid{
-
-    display:grid;
+.how-grid {
+    display: grid;
 
     grid-template-columns:
-    repeat(3,1fr);
+        repeat(3,1fr);
 
-    gap:15px;
-
+    gap: 15px;
 }
 
-.step{
+.step {
+    padding: 18px;
 
-    padding:18px;
-
-    border-radius:16px;
+    border-radius: 16px;
 
     background:
-    rgba(30,41,59,.45);
+        rgba(30,41,59,.45);
 
     border:
-    1px solid
-    rgba(148,163,184,.08);
-
+        1px solid
+        rgba(148,163,184,.08);
 }
 
-.step-number{
+.step-number {
+    width: 32px;
+    height: 32px;
 
-    width:32px;
+    border-radius: 10px;
 
-    height:32px;
+    display: flex;
 
-    border-radius:10px;
+    align-items: center;
+    justify-content: center;
 
-    display:flex;
+    background: #172554;
 
-    align-items:center;
+    color: #60a5fa;
 
-    justify-content:center;
+    font-size: 13px;
 
-    background:#172554;
+    font-weight: 700;
 
-    color:#60a5fa;
-
-    font-size:13px;
-
-    font-weight:700;
-
-    margin-bottom:12px;
-
+    margin-bottom: 12px;
 }
 
-.step-title{
+.step-title {
+    font-size: 13px;
 
-    font-size:13px;
+    font-weight: 700;
 
-    font-weight:700;
-
-    margin-bottom:5px;
-
+    margin-bottom: 5px;
 }
 
-.step-text{
+.step-text {
+    font-size: 11px;
 
-    font-size:11px;
+    line-height: 1.5;
 
-    line-height:1.5;
-
-    color:#64748b;
-
+    color: #64748b;
 }
 
 
-/* =====================================================
-   FOOTER
-===================================================== */
+/* =========================
+   ABOUT PAGE
+========================= */
 
-.footer{
+.about-header {
+    text-align: center;
 
-    text-align:center;
-
-    margin-top:35px;
-
-    color:#475569;
-
-    font-size:11px;
-
-    line-height:1.6;
-
+    margin-bottom: 30px;
 }
 
-.disclaimer{
-
-    max-width:700px;
+.about-header h2 {
+    font-size: 38px;
 
     margin:
-    0
-    auto
-    12px;
+        0
+        0
+        10px;
+}
 
+.about-header p {
+    color: #94a3b8;
+
+    max-width: 650px;
+
+    margin: auto;
+
+    line-height: 1.6;
+}
+
+.about-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 20px;
+}
+
+.about-card {
+    background:
+        rgba(15,23,42,.82);
+
+    border:
+        1px solid
+        rgba(148,163,184,.12);
+
+    border-radius: 22px;
+
+    padding: 24px;
+}
+
+.about-icon {
+    font-size: 28px;
+
+    margin-bottom: 12px;
+}
+
+.about-card h3 {
+    margin:
+        0
+        0
+        8px;
+
+    font-size: 17px;
+}
+
+.about-card p {
+    margin: 0;
+
+    color: #94a3b8;
+
+    line-height: 1.7;
+
+    font-size: 13px;
+}
+
+.tech-list {
+    display: grid;
+
+    gap: 10px;
+
+    margin-top: 15px;
+}
+
+.tech-item {
+    padding: 12px;
+
+    border-radius: 12px;
+
+    background: #111c2e;
+
+    color: #cbd5e1;
+
+    font-size: 13px;
+}
+
+.tech-item strong {
+    color: #60a5fa;
 }
 
 
-/* =====================================================
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+    text-align: center;
+
+    margin-top: 35px;
+
+    color: #475569;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+}
+
+.disclaimer {
+    max-width: 700px;
+
+    margin:
+        0
+        auto
+        12px;
+}
+
+
+/* =========================
    MOBILE
-===================================================== */
+========================= */
 
-@media(max-width:760px){
+@media(max-width:760px) {
 
-    .app{
-
+    .app {
         padding:
-        20px
-        13px
-        45px;
-
+            20px
+            13px
+            45px;
     }
 
-    .navbar{
+    .navbar {
+        align-items: flex-start;
 
-        margin-bottom:32px;
+        gap: 15px;
 
+        flex-direction: column;
     }
 
-    .main-grid{
-
-        grid-template-columns:1fr;
-
+    .nav-buttons {
+        width: 100%;
     }
 
-    .how-grid{
-
-        grid-template-columns:1fr;
-
+    .nav-button {
+        flex: 1;
     }
 
-    .hero{
-
-        margin-bottom:25px;
-
+    .main-grid {
+        grid-template-columns: 1fr;
     }
 
-    .hero h1{
-
-        font-size:38px;
-
+    .how-grid {
+        grid-template-columns: 1fr;
     }
 
-    .status-pill{
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
 
-        display:none;
-
+    .hero h1 {
+        font-size: 38px;
     }
 
 }
@@ -1052,9 +895,9 @@ input[type="file"]{
 <div class="app">
 
 
-<!-- =====================================================
-     NAVIGATION
-===================================================== -->
+<!-- =========================
+     NAVBAR
+========================= -->
 
 <div class="navbar">
 
@@ -1071,148 +914,24 @@ input[type="file"]{
     </div>
 
 
-    <div class="status-pill">
+    <div class="nav-buttons">
 
-        <div class="status-dot"></div>
-
-        AI MODEL ONLINE
-
-    </div>
-
-</div>
-
-
-
-<!-- =====================================================
-     HERO
-===================================================== -->
-
-<div class="hero">
-
-    <div class="hero-badge">
-        AI-POWERED IMAGE CLASSIFICATION
-    </div>
-
-    <h1>
-        Intelligent
-        <span>Brain Scan</span>
-        Analysis
-    </h1>
-
-    <p>
-        Upload a brain scan image and let the trained
-        BrainScan AI model classify the image.
-    </p>
-
-</div>
-
-
-
-<!-- =====================================================
-     MAIN
-===================================================== -->
-
-<div class="main-grid">
-
-
-<!-- =====================================================
-     LEFT — UPLOAD
-===================================================== -->
-
-<div class="card">
-
-    <div class="card-header">
-
-        <div class="card-title">
-            Analyze a Brain Scan
-        </div>
-
-        <div class="card-description">
-            Upload an image to begin AI classification.
-        </div>
-
-    </div>
-
-
-    <div
-        class="upload-area"
-        onclick="document.getElementById('imageInput').click()"
-    >
-
-        <div class="upload-icon">
-            🧠
-        </div>
-
-        <div class="upload-title">
-            Upload your scan
-        </div>
-
-        <div class="upload-description">
-            Select a brain scan image from your device
-        </div>
-
-
-        <label
-            class="upload-button"
-            onclick="event.stopPropagation()"
-            for="imageInput"
+        <button
+            class="nav-button active"
+            id="homeNav"
+            onclick="showPage('home')"
         >
-            Choose Image
-        </label>
+            Home
+        </button>
 
 
-        <input
-            type="file"
-            id="imageInput"
-            accept="image/*"
+        <button
+            class="nav-button"
+            id="aboutNav"
+            onclick="showPage('about')"
         >
-
-    </div>
-
-
-    <div
-        class="preview-wrapper"
-        id="previewWrapper"
-    >
-
-        <div class="preview-label">
-            SELECTED SCAN
-        </div>
-
-        <div class="preview-box">
-
-            <img
-                id="preview"
-                alt="Brain scan preview"
-            >
-
-        </div>
-
-    </div>
-
-
-    <button
-        class="analyze-button"
-        id="analyzeButton"
-        onclick="analyzeImage()"
-        disabled
-    >
-
-        🔍 Analyze Scan
-
-    </button>
-
-
-    <div class="status">
-
-        <div
-            class="spinner"
-            id="spinner"
-        ></div>
-
-        <span id="statusText">
-            Select an image to begin.
-        </span>
+            About
+        </button>
 
     </div>
 
@@ -1221,86 +940,233 @@ input[type="file"]{
 
 
 <!-- =====================================================
-     RIGHT — RESULT
+     HOME PAGE
 ===================================================== -->
 
 <div
-    class="card result-card"
-    id="resultCard"
+    class="page active"
+    id="homePage"
 >
 
-    <div class="result-badge">
-        AI CLASSIFICATION
-    </div>
 
+    <div class="hero">
 
-    <div
-        class="prediction"
-        id="prediction"
-    >
-        —
-    </div>
-
-
-    <div class="confidence-header">
-
-        <span class="confidence-label">
-            Model confidence
-        </span>
-
-        <span
-            class="confidence-value"
-            id="confidenceText"
-        >
-            0%
-        </span>
-
-    </div>
-
-
-    <div class="confidence-track">
-
-        <div
-            class="confidence-fill"
-            id="confidenceFill"
-        ></div>
-
-    </div>
-
-
-    <div class="breakdown">
-
-        <div class="breakdown-title">
-            Classification breakdown
+        <div class="hero-badge">
+            AI-POWERED IMAGE CLASSIFICATION
         </div>
 
-        <div id="breakdownContainer"></div>
+
+        <h1>
+
+            Intelligent
+            <span>Brain Scan</span>
+            Analysis
+
+        </h1>
+
+
+        <p>
+
+            Upload a brain scan image and let the trained
+            BrainScan AI model classify the image.
+
+        </p>
 
     </div>
 
 
-    <button
-        class="reset-button"
-        onclick="resetScan()"
-    >
 
-        ↻ Analyze Another Scan
-
-    </button>
-
-</div>
-
-</div>
+    <div class="main-grid">
 
 
+        <!-- =========================
+             UPLOAD
+        ========================= -->
 
-<!-- =====================================================
-     HOW IT WORKS
-===================================================== -->
+        <div class="card">
 
-<div class="card how-card">
+            <div class="card-title">
+                Analyze a Brain Scan
+            </div>
 
-    <div class="card-header">
+            <div class="card-description">
+                Upload an image to begin AI classification.
+            </div>
+
+
+            <div
+                class="upload-area"
+                onclick="document.getElementById('imageInput').click()"
+            >
+
+                <div class="upload-icon">
+                    🧠
+                </div>
+
+
+                <div class="upload-title">
+                    Upload your scan
+                </div>
+
+
+                <div class="upload-description">
+                    Select a brain scan image from your device
+                </div>
+
+
+                <label
+                    class="upload-button"
+                    onclick="event.stopPropagation()"
+                    for="imageInput"
+                >
+                    Choose Image
+                </label>
+
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept="image/*"
+                >
+
+            </div>
+
+
+            <div
+                class="preview-wrapper"
+                id="previewWrapper"
+            >
+
+                <div class="preview-label">
+                    SELECTED SCAN
+                </div>
+
+
+                <div class="preview-box">
+
+                    <img
+                        id="preview"
+                        alt="Brain scan preview"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="analyze-button"
+                id="analyzeButton"
+                onclick="analyzeImage()"
+                disabled
+            >
+
+                🔍 Analyze Scan
+
+            </button>
+
+
+            <div class="status">
+
+                <div
+                    class="spinner"
+                    id="spinner"
+                ></div>
+
+
+                <span id="statusText">
+                    Select an image to begin.
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             RESULT
+        ========================= -->
+
+        <div
+            class="card result-card"
+            id="resultCard"
+        >
+
+            <div class="result-badge">
+                AI CLASSIFICATION
+            </div>
+
+
+            <div
+                class="prediction"
+                id="prediction"
+            >
+                —
+            </div>
+
+
+            <div class="confidence-header">
+
+                <span class="confidence-label">
+                    Model confidence
+                </span>
+
+
+                <span
+                    class="confidence-value"
+                    id="confidenceText"
+                >
+                    0%
+                </span>
+
+            </div>
+
+
+            <div class="confidence-track">
+
+                <div
+                    class="confidence-fill"
+                    id="confidenceFill"
+                ></div>
+
+            </div>
+
+
+            <div class="breakdown">
+
+                <div class="breakdown-title">
+                    Classification breakdown
+                </div>
+
+
+                <div
+                    id="breakdownContainer"
+                ></div>
+
+            </div>
+
+
+            <button
+                class="reset-button"
+                onclick="resetScan()"
+            >
+
+                ↻ Analyze Another Scan
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         HOW IT WORKS
+    ========================= -->
+
+    <div class="card how-card">
 
         <div class="card-title">
             How BrainScan AI Works
@@ -1310,59 +1176,286 @@ input[type="file"]{
             Three simple steps from image to AI classification.
         </div>
 
+
+        <div class="how-grid">
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    01
+                </div>
+
+                <div class="step-title">
+                    Upload
+                </div>
+
+                <div class="step-text">
+                    Select a brain scan image from your device.
+                </div>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    02
+                </div>
+
+                <div class="step-title">
+                    Analyze
+                </div>
+
+                <div class="step-text">
+                    The trained AI model processes the selected image.
+                </div>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    03
+                </div>
+
+                <div class="step-title">
+                    Result
+                </div>
+
+                <div class="step-text">
+                    View the predicted class and model confidence.
+                </div>
+
+            </div>
+
+
+        </div>
+
     </div>
 
 
-    <div class="how-grid">
+</div>
 
 
-        <div class="step">
 
-            <div class="step-number">
-                01
+<!-- =====================================================
+     ABOUT PAGE
+===================================================== -->
+
+<div
+    class="page"
+    id="aboutPage"
+>
+
+
+    <div class="about-header">
+
+        <div class="hero-badge">
+            ABOUT THE PROJECT
+        </div>
+
+
+        <h2>
+            About BrainScan AI
+        </h2>
+
+
+        <p>
+
+            BrainScan AI is an educational artificial intelligence
+            project designed to demonstrate how image classification
+            can be applied to brain scan images.
+
+        </p>
+
+    </div>
+
+
+
+    <div class="about-grid">
+
+
+        <!-- =========================
+             WHAT IS IT
+        ========================= -->
+
+        <div class="about-card">
+
+            <div class="about-icon">
+                🧠
             </div>
 
-            <div class="step-title">
-                Upload
+            <h3>
+                What is BrainScan AI?
+            </h3>
+
+            <p>
+
+                BrainScan AI is an image-classification prototype.
+                A machine-learning model is trained using labelled
+                brain scan images and then used to classify new,
+                previously unseen images.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- =========================
+             HOW IT WORKS
+        ========================= -->
+
+        <div class="about-card">
+
+            <div class="about-icon">
+                ⚙️
             </div>
 
-            <div class="step-text">
-                Select a brain scan image from your device.
+            <h3>
+                How does it work?
+            </h3>
+
+            <p>
+
+                When an image is uploaded, the trained model analyzes
+                visual patterns in the image and assigns probabilities
+                to the classes it has learned. The class with the
+                highest probability is displayed as the prediction.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- =========================
+             TECHNOLOGY
+        ========================= -->
+
+        <div class="about-card">
+
+            <div class="about-icon">
+                💻
+            </div>
+
+            <h3>
+                Technology Used
+            </h3>
+
+
+            <div class="tech-list">
+
+                <div class="tech-item">
+                    <strong>Model:</strong>
+                    Google Teachable Machine
+                </div>
+
+
+                <div class="tech-item">
+                    <strong>Model format:</strong>
+                    TensorFlow.js
+                </div>
+
+
+                <div class="tech-item">
+                    <strong>Web interface:</strong>
+                    HTML, CSS & JavaScript
+                </div>
+
+
+                <div class="tech-item">
+                    <strong>Mobile application:</strong>
+                    MIT App Inventor
+                </div>
+
             </div>
 
         </div>
 
 
-        <div class="step">
 
-            <div class="step-number">
-                02
+        <!-- =========================
+             PURPOSE
+        ========================= -->
+
+        <div class="about-card">
+
+            <div class="about-icon">
+                🎯
             </div>
 
-            <div class="step-title">
-                Analyze
-            </div>
+            <h3>
+                Project Purpose
+            </h3>
 
-            <div class="step-text">
-                The trained AI model processes the selected image.
-            </div>
+            <p>
+
+                The purpose of this project is to explore the use of
+                artificial intelligence and image classification in
+                medical-imaging research. It demonstrates the complete
+                process from training an AI model to deploying it
+                through a user-friendly application interface.
+
+            </p>
 
         </div>
 
 
-        <div class="step">
 
-            <div class="step-number">
-                03
+        <!-- =========================
+             MODEL
+        ========================= -->
+
+        <div class="about-card">
+
+            <div class="about-icon">
+                🤖
             </div>
 
-            <div class="step-title">
-                Result
+            <h3>
+                About the AI Model
+            </h3>
+
+            <p>
+
+                The classification model was trained using labelled
+                image examples. During prediction, the model evaluates
+                the uploaded image and produces a probability for each
+                learned class. The displayed confidence represents
+                the model's calculated probability for its prediction.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- =========================
+             LIMITATIONS
+        ========================= -->
+
+        <div class="about-card">
+
+            <div class="about-icon">
+                ⚠️
             </div>
 
-            <div class="step-text">
-                View the predicted class and model confidence.
-            </div>
+            <h3>
+                Important Limitation
+            </h3>
+
+            <p>
+
+                BrainScan AI is an educational and research prototype.
+                Its predictions should not be interpreted as a medical
+                diagnosis. Real clinical diagnosis requires qualified
+                healthcare professionals, appropriate medical imaging
+                protocols, and clinical evaluation.
+
+            </p>
 
         </div>
 
@@ -1385,10 +1478,10 @@ input[type="file"]{
 
         BrainScan AI provides AI-based image classification
         for educational and research purposes only.
-        It is not a medical diagnostic tool and should not
-        replace evaluation by a qualified healthcare professional.
+        It is not a medical diagnostic tool.
 
     </div>
+
 
     BrainScan AI • AI Image Classification Prototype
 
@@ -1401,15 +1494,15 @@ input[type="file"]{
 
 <!-- =====================================================
      JAVASCRIPT
-     MODEL CONNECTION PRESERVED
 ===================================================== -->
 
 <script>
 
 
 /* =====================================================
-   YOUR ORIGINAL TEACHABLE MACHINE MODEL
-   ===================================================== */
+   TEACHABLE MACHINE MODEL
+   SAME MODEL URL
+===================================================== */
 
 const MODEL_URL =
 "https://teachablemachine.withgoogle.com/models/XPJn1-s88/";
@@ -1422,6 +1515,63 @@ let imageElement = null;
 
 
 /* =====================================================
+   PAGE NAVIGATION
+===================================================== */
+
+function showPage(page) {
+
+
+    const homePage =
+    document.getElementById("homePage");
+
+
+    const aboutPage =
+    document.getElementById("aboutPage");
+
+
+    const homeNav =
+    document.getElementById("homeNav");
+
+
+    const aboutNav =
+    document.getElementById("aboutNav");
+
+
+    if(page === "home") {
+
+
+        homePage.classList.add("active");
+
+        aboutPage.classList.remove("active");
+
+
+        homeNav.classList.add("active");
+
+        aboutNav.classList.remove("active");
+
+
+    }
+
+
+    else {
+
+
+        homePage.classList.remove("active");
+
+        aboutPage.classList.add("active");
+
+
+        homeNav.classList.remove("active");
+
+        aboutNav.classList.add("active");
+
+
+    }
+
+}
+
+
+/* =====================================================
    IMAGE SELECTION
 ===================================================== */
 
@@ -1429,13 +1579,14 @@ document
 .getElementById("imageInput")
 .addEventListener(
     "change",
-    function(event){
+    function(event) {
+
 
         const file =
         event.target.files[0];
 
 
-        if(!file){
+        if(!file) {
 
             return;
 
@@ -1447,7 +1598,7 @@ document
 
 
         reader.onload =
-        function(e){
+        function(e) {
 
 
             imageElement =
@@ -1479,6 +1630,12 @@ document
             document
             .getElementById("resultCard")
             .style.display =
+            "block";
+
+
+            document
+            .getElementById("resultCard")
+            .style.display =
             "none";
 
 
@@ -1497,15 +1654,17 @@ document
    ANALYZE IMAGE
 ===================================================== */
 
-async function analyzeImage(){
+async function analyzeImage() {
 
 
-    if(!imageElement){
+    if(!imageElement) {
+
 
         document
         .getElementById("statusText")
         .innerText =
         "Please select an image first.";
+
 
         return;
 
@@ -1536,15 +1695,16 @@ async function analyzeImage(){
     "Analyzing scan...";
 
 
-    try{
+    try {
 
 
         /* ==========================================
            LOAD MODEL
-           SAME MODEL AS BEFORE
+           SAME MODEL CONNECTION
         ========================================== */
 
-        if(!model){
+        if(!model) {
+
 
             model =
             await tmImage.load(
@@ -1561,7 +1721,7 @@ async function analyzeImage(){
 
 
         /* ==========================================
-           PREDICTION
+           PREDICT
         ========================================== */
 
         const predictions =
@@ -1571,7 +1731,7 @@ async function analyzeImage(){
 
 
         /* ==========================================
-           SORT PREDICTIONS
+           SORT
         ========================================== */
 
         predictions.sort(
@@ -1592,7 +1752,7 @@ async function analyzeImage(){
 
 
         /* ==========================================
-           MAIN RESULT
+           DISPLAY RESULT
         ========================================== */
 
         document
@@ -1622,7 +1782,7 @@ async function analyzeImage(){
 
 
         /* ==========================================
-           CLASSIFICATION BREAKDOWN
+           BREAKDOWN
         ========================================== */
 
         const container =
@@ -1632,7 +1792,8 @@ async function analyzeImage(){
         );
 
 
-        container.innerHTML = "";
+        container.innerHTML =
+        "";
 
 
         predictions.forEach(
@@ -1669,6 +1830,7 @@ async function analyzeImage(){
 
                     </div>
 
+
                     <div class="class-track">
 
                         <div
@@ -1698,7 +1860,7 @@ async function analyzeImage(){
     }
 
 
-    catch(error){
+    catch(error) {
 
 
         console.error(error);
@@ -1720,7 +1882,6 @@ async function analyzeImage(){
     button.disabled =
     false;
 
-
 }
 
 
@@ -1729,7 +1890,7 @@ async function analyzeImage(){
    RESET
 ===================================================== */
 
-function resetScan(){
+function resetScan() {
 
 
     document
@@ -1778,7 +1939,6 @@ function resetScan(){
     "";
 
 }
-
 
 </script>
 
