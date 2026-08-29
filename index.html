@@ -1,16 +1,31 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>BrainScan AI</title>
 
+
+<!-- =====================================================
+     TEACHABLE MACHINE / TENSORFLOW
+===================================================== -->
+
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 
+
 <style>
+
+/* =====================================================
+   GLOBAL
+===================================================== */
 
 * {
     box-sizing: border-box;
@@ -21,151 +36,244 @@ html {
 }
 
 body {
+
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
     background:
-        radial-gradient(circle at 20% 0%, #172554 0%, #0b1220 38%, #070c15 100%);
+        radial-gradient(
+            circle at 15% 0%,
+            #172554 0%,
+            #0b1220 38%,
+            #070c15 100%
+        );
+
     color: #f8fafc;
+
     min-height: 100vh;
+
 }
 
 
-/* =========================
+/* =====================================================
    APP
-========================= */
+===================================================== */
 
 .app {
+
     width: 100%;
-    max-width: 1050px;
+
+    max-width: 1100px;
+
     margin: auto;
-    padding: 25px 20px 60px;
+
+    padding:
+        25px
+        20px
+        60px;
+
 }
 
 
-/* =========================
-   NAVIGATION
-========================= */
+/* =====================================================
+   NAVBAR
+===================================================== */
 
 .navbar {
+
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
-    margin-bottom: 40px;
+
+    margin-bottom: 45px;
+
 }
 
 .brand {
+
     display: flex;
+
     align-items: center;
+
     gap: 12px;
+
 }
 
 .brand-icon {
+
     width: 45px;
+
     height: 45px;
+
     border-radius: 14px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
-    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #4f46e5
+        );
 
-    font-size: 24px;
+    font-size: 23px;
 
     box-shadow:
-        0 8px 25px rgba(37,99,235,.35);
+        0 8px 25px
+        rgba(37,99,235,.35);
+
 }
 
 .brand-name {
+
     font-size: 20px;
-    font-weight: 700;
+
+    font-weight: 750;
+
+    letter-spacing: -.4px;
+
 }
 
 .nav-buttons {
+
     display: flex;
-    gap: 8px;
+
+    gap: 7px;
+
 }
 
 .nav-button {
+
     border: 1px solid transparent;
+
     background: transparent;
+
     color: #94a3b8;
 
-    padding: 9px 14px;
+    padding:
+        9px
+        15px;
 
     border-radius: 10px;
 
     cursor: pointer;
 
     font-size: 13px;
+
     font-weight: 600;
+
+    transition: .2s ease;
+
 }
 
 .nav-button:hover {
+
     background: #172033;
+
     color: white;
+
 }
 
 .nav-button.active {
+
     background: #172554;
+
     color: #60a5fa;
 
     border-color: #263c69;
+
 }
 
 
-/* =========================
-   PAGES
-========================= */
+/* =====================================================
+   PAGE SYSTEM
+===================================================== */
 
 .page {
+
     display: none;
+
 }
 
 .page.active {
+
     display: block;
+
 }
 
 
-/* =========================
+/* =====================================================
    HERO
-========================= */
+===================================================== */
 
 .hero {
+
     text-align: center;
-    margin-bottom: 35px;
+
+    margin-bottom: 38px;
+
 }
 
 .hero-badge {
+
     display: inline-block;
 
-    padding: 7px 13px;
+    padding:
+        7px
+        13px;
 
     border-radius: 30px;
 
-    background: rgba(37,99,235,.12);
+    background:
+        rgba(37,99,235,.12);
 
-    border: 1px solid rgba(96,165,250,.2);
+    border:
+        1px solid
+        rgba(96,165,250,.2);
 
     color: #93c5fd;
 
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 11px;
 
-    margin-bottom: 15px;
+    font-weight: 700;
+
+    letter-spacing: .4px;
+
+    margin-bottom: 16px;
+
 }
 
 .hero h1 {
-    font-size: clamp(34px,6vw,58px);
 
-    line-height: 1.05;
+    font-size:
+        clamp(38px,6vw,60px);
 
-    margin: 0 0 15px;
+    line-height: 1.03;
 
-    letter-spacing: -2px;
+    margin:
+        0
+        0
+        15px;
+
+    letter-spacing: -2.5px;
+
 }
 
 .hero h1 span {
+
     background:
         linear-gradient(
             90deg,
@@ -175,45 +283,53 @@ body {
         );
 
     -webkit-background-clip: text;
+
     background-clip: text;
 
     color: transparent;
+
 }
 
 .hero p {
+
     color: #94a3b8;
 
-    max-width: 600px;
+    max-width: 650px;
 
     margin: auto;
 
-    font-size: 16px;
+    font-size: 15px;
 
-    line-height: 1.6;
+    line-height: 1.65;
+
 }
 
 
-/* =========================
-   GRID
-========================= */
+/* =====================================================
+   MAIN GRID
+===================================================== */
 
 .main-grid {
+
     display: grid;
 
     grid-template-columns:
-        1.15fr
-        .85fr;
+        1fr
+        1fr;
 
     gap: 20px;
+
 }
 
 
-/* =========================
-   CARD
-========================= */
+/* =====================================================
+   CARDS
+===================================================== */
 
 .card {
-    background: rgba(15,23,42,.82);
+
+    background:
+        rgba(15,23,42,.82);
 
     border:
         1px solid
@@ -226,15 +342,21 @@ body {
     backdrop-filter: blur(20px);
 
     box-shadow:
-        0 20px 60px rgba(0,0,0,.25);
+        0 20px 60px
+        rgba(0,0,0,.25);
+
 }
 
 .card-title {
+
     font-size: 18px;
+
     font-weight: 700;
+
 }
 
 .card-description {
+
     color: #64748b;
 
     font-size: 13px;
@@ -242,75 +364,102 @@ body {
     margin-top: 5px;
 
     margin-bottom: 20px;
+
 }
 
 
-/* =========================
+/* =====================================================
    UPLOAD
-========================= */
+===================================================== */
 
 .upload-area {
+
     border:
         1.5px dashed
         #334155;
 
     border-radius: 20px;
 
-    padding: 42px 20px;
+    padding:
+        42px
+        20px;
 
     text-align: center;
 
     cursor: pointer;
 
-    transition: .25s ease;
+    transition:
+        .25s ease;
+
+    background:
+        rgba(15,23,42,.45);
+
 }
 
 .upload-area:hover {
+
     border-color: #3b82f6;
 
-    background: rgba(37,99,235,.06);
+    background:
+        rgba(37,99,235,.06);
+
+    transform:
+        translateY(-1px);
+
 }
 
 .upload-icon {
+
     width: 65px;
+
     height: 65px;
 
     border-radius: 20px;
 
-    margin: 0 auto 16px;
+    margin:
+        0
+        auto
+        16px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     background: #172554;
 
-    font-size: 30px;
+    font-size: 29px;
+
 }
 
 .upload-title {
+
     font-size: 16px;
-    font-weight: 600;
+
+    font-weight: 650;
 
     margin-bottom: 7px;
+
 }
 
 .upload-description {
+
     color: #64748b;
 
     font-size: 13px;
 
     margin-bottom: 20px;
-}
 
-input[type="file"] {
-    display: none;
 }
 
 .upload-button {
+
     display: inline-block;
 
-    padding: 12px 20px;
+    padding:
+        12px
+        20px;
 
     border-radius: 12px;
 
@@ -324,56 +473,87 @@ input[type="file"] {
     color: white;
 
     font-size: 14px;
-    font-weight: 600;
+
+    font-weight: 650;
 
     cursor: pointer;
+
+    box-shadow:
+        0 8px 25px
+        rgba(37,99,235,.22);
+
+}
+
+.upload-button:hover {
+
+    filter: brightness(1.1);
+
+}
+
+input[type="file"] {
+
+    display: none;
+
 }
 
 
-/* =========================
+/* =====================================================
    PREVIEW
-========================= */
+===================================================== */
 
 .preview-wrapper {
+
     margin-top: 18px;
 
     display: none;
+
 }
 
 .preview-label {
-    font-size: 12px;
+
+    font-size: 11px;
 
     color: #64748b;
 
+    letter-spacing: .6px;
+
     margin-bottom: 8px;
+
 }
 
 .preview-box {
+
     overflow: hidden;
 
     border-radius: 17px;
 
-    border: 1px solid #263449;
+    border:
+        1px solid
+        #263449;
 
     background: #020617;
+
 }
 
 #preview {
+
     display: block;
 
     width: 100%;
 
-    max-height: 370px;
+    max-height: 360px;
 
     object-fit: contain;
+
 }
 
 
-/* =========================
-   BUTTON
-========================= */
+/* =====================================================
+   ANALYZE BUTTON
+===================================================== */
 
 .analyze-button {
+
     width: 100%;
 
     border: none;
@@ -398,25 +578,43 @@ input[type="file"] {
     font-weight: 700;
 
     cursor: pointer;
+
+    transition: .2s ease;
+
+}
+
+.analyze-button:hover:not(:disabled) {
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 12px 30px
+        rgba(37,99,235,.25);
+
 }
 
 .analyze-button:disabled {
+
     background: #1e293b;
 
     color: #64748b;
 
     cursor: not-allowed;
+
 }
 
 
-/* =========================
+/* =====================================================
    STATUS
-========================= */
+===================================================== */
 
 .status {
+
     display: flex;
 
     justify-content: center;
+
     align-items: center;
 
     gap: 8px;
@@ -426,76 +624,95 @@ input[type="file"] {
     color: #64748b;
 
     font-size: 12px;
+
 }
 
 .spinner {
+
     width: 14px;
+
     height: 14px;
 
     border:
         2px solid
         #334155;
 
-    border-top-color: #60a5fa;
+    border-top-color:
+        #60a5fa;
 
     border-radius: 50%;
 
-    animation: spin .8s linear infinite;
+    animation:
+        spin .8s linear infinite;
 
     display: none;
+
 }
 
 @keyframes spin {
+
     to {
         transform: rotate(360deg);
     }
+
 }
 
 
-/* =========================
-   RESULTS
-========================= */
+/* =====================================================
+   RESULT
+===================================================== */
 
 .result-card {
+
     display: none;
+
 }
 
 .result-badge {
+
     display: inline-block;
 
-    padding: 6px 10px;
+    padding:
+        6px
+        10px;
 
     border-radius: 8px;
 
-    background: rgba(59,130,246,.1);
+    background:
+        rgba(59,130,246,.1);
 
     color: #60a5fa;
 
-    font-size: 11px;
+    font-size: 10px;
 
-    font-weight: 700;
+    font-weight: 750;
 
-    letter-spacing: .6px;
+    letter-spacing: .8px;
 
     margin-bottom: 13px;
+
 }
 
 .prediction {
-    font-size: 32px;
+
+    font-size:
+        clamp(28px,4vw,38px);
 
     font-weight: 800;
 
-    line-height: 1.15;
+    line-height: 1.1;
 
     margin-bottom: 20px;
+
 }
 
 
-/* =========================
+/* =====================================================
    CONFIDENCE
-========================= */
+===================================================== */
 
 .confidence-header {
+
     display: flex;
 
     justify-content: space-between;
@@ -503,31 +720,39 @@ input[type="file"] {
     margin-bottom: 8px;
 
     font-size: 13px;
+
 }
 
 .confidence-label {
+
     color: #94a3b8;
+
 }
 
 .confidence-value {
+
     color: #60a5fa;
 
-    font-weight: 700;
+    font-weight: 750;
+
 }
 
 .confidence-track {
+
     width: 100%;
 
-    height: 10px;
+    height: 9px;
 
     background: #1e293b;
 
     border-radius: 20px;
 
     overflow: hidden;
+
 }
 
 .confidence-fill {
+
     width: 0%;
 
     height: 100%;
@@ -541,78 +766,346 @@ input[type="file"] {
             #818cf8
         );
 
-    transition: width 1s ease;
+    transition:
+        width 1s ease;
+
 }
 
 
-/* =========================
-   BREAKDOWN
-========================= */
+/* =====================================================
+   CLASSIFICATION SECTION
+===================================================== */
 
-.breakdown {
-    margin-top: 25px;
+.classification-section {
+
+    margin-top: 30px;
+
 }
 
-.breakdown-title {
-    font-size: 13px;
+.classification-heading {
 
-    font-weight: 600;
-
-    color: #cbd5e1;
-
-    margin-bottom: 13px;
-}
-
-.class-row {
-    margin-bottom: 13px;
-}
-
-.class-top {
     display: flex;
 
     justify-content: space-between;
 
-    font-size: 12px;
+    align-items: center;
 
-    margin-bottom: 5px;
+    margin-bottom: 14px;
+
+}
+
+.classification-title {
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+}
+
+.classification-subtitle {
+
+    font-size: 10px;
+
+    color: #64748b;
+
+}
+
+
+/* =====================================================
+   CLASS CARDS
+===================================================== */
+
+.class-list {
+
+    display: grid;
+
+    gap: 10px;
+
+}
+
+.class-card {
+
+    position: relative;
+
+    padding:
+        16px;
+
+    border-radius: 16px;
+
+    background:
+        rgba(30,41,59,.45);
+
+    border:
+        1px solid
+        rgba(148,163,184,.09);
+
+    transition:
+        .35s ease;
+
+    overflow: hidden;
+
+}
+
+.class-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    top: 0;
+
+    bottom: 0;
+
+    width: 3px;
+
+    background:
+        transparent;
+
+    transition:
+        .35s ease;
+
+}
+
+.class-card:hover {
+
+    transform:
+        translateY(-1px);
+
+    background:
+        rgba(30,41,59,.65);
+
+}
+
+.class-card.predicted {
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(37,99,235,.17),
+            rgba(79,70,229,.12)
+        );
+
+    border-color:
+        rgba(96,165,250,.45);
+
+    box-shadow:
+        0 0 25px
+        rgba(37,99,235,.13);
+
+    transform:
+        translateY(-2px);
+
+}
+
+.class-card.predicted::before {
+
+    background:
+        linear-gradient(
+            180deg,
+            #60a5fa,
+            #818cf8
+        );
+
+}
+
+.class-top {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+}
+
+.class-name-wrapper {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+.class-icon {
+
+    width: 34px;
+
+    height: 34px;
+
+    border-radius: 10px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        #111c2e;
+
+    font-size: 16px;
+
+    flex-shrink: 0;
+
+}
+
+.predicted .class-icon {
+
+    background:
+        #172554;
+
 }
 
 .class-name {
-    color: #94a3b8;
-}
 
-.class-percent {
+    font-size: 13px;
+
+    font-weight: 700;
+
     color: #cbd5e1;
+
 }
 
-.class-track {
-    height: 6px;
+.predicted .class-name {
 
-    background: #1e293b;
+    color: #f8fafc;
 
-    border-radius: 20px;
+}
+
+.predicted-badge {
+
+    display: none;
+
+    padding:
+        5px
+        8px;
+
+    border-radius: 7px;
+
+    background:
+        rgba(96,165,250,.12);
+
+    color:
+        #60a5fa;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: .5px;
+
+}
+
+.predicted .predicted-badge {
+
+    display: inline-block;
+
+}
+
+.class-description {
+
+    margin:
+        9px
+        0
+        0
+        44px;
+
+    color: #64748b;
+
+    font-size: 11px;
+
+    line-height: 1.55;
+
+}
+
+.predicted .class-description {
+
+    color: #94a3b8;
+
+}
+
+.class-confidence {
+
+    display: none;
+
+    margin-top: 12px;
+
+}
+
+.predicted .class-confidence {
+
+    display: block;
+
+}
+
+.class-confidence-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    font-size: 10px;
+
+    color: #64748b;
+
+    margin-bottom: 5px;
+
+}
+
+.class-confidence-value {
+
+    color: #60a5fa;
+
+    font-weight: 700;
+
+}
+
+.class-confidence-track {
+
+    height: 5px;
+
+    background:
+        #1e293b;
+
+    border-radius: 10px;
 
     overflow: hidden;
+
 }
 
-.class-fill {
+.class-confidence-fill {
+
     height: 100%;
 
     width: 0%;
 
-    background: #475569;
+    border-radius: 10px;
 
-    border-radius: 20px;
+    background:
+        linear-gradient(
+            90deg,
+            #2563eb,
+            #818cf8
+        );
 
-    transition: width .7s ease;
+    transition:
+        width .8s ease;
+
 }
 
 
-/* =========================
+/* =====================================================
    RESET
-========================= */
+===================================================== */
 
 .reset-button {
+
     width: 100%;
 
     margin-top: 20px;
@@ -632,33 +1125,43 @@ input[type="file"] {
     cursor: pointer;
 
     font-weight: 600;
+
+    transition: .2s ease;
+
 }
 
 .reset-button:hover {
+
     background: #172033;
 
     color: white;
+
 }
 
 
-/* =========================
+/* =====================================================
    HOW IT WORKS
-========================= */
+===================================================== */
 
 .how-card {
+
     margin-top: 20px;
+
 }
 
 .how-grid {
+
     display: grid;
 
     grid-template-columns:
         repeat(3,1fr);
 
     gap: 15px;
+
 }
 
 .step {
+
     padding: 18px;
 
     border-radius: 16px;
@@ -669,10 +1172,13 @@ input[type="file"] {
     border:
         1px solid
         rgba(148,163,184,.08);
+
 }
 
 .step-number {
+
     width: 32px;
+
     height: 32px;
 
     border-radius: 10px;
@@ -680,75 +1186,97 @@ input[type="file"] {
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
-    background: #172554;
+    background:
+        #172554;
 
-    color: #60a5fa;
+    color:
+        #60a5fa;
 
-    font-size: 13px;
+    font-size: 11px;
 
-    font-weight: 700;
+    font-weight: 750;
 
     margin-bottom: 12px;
+
 }
 
 .step-title {
+
     font-size: 13px;
 
     font-weight: 700;
 
     margin-bottom: 5px;
+
 }
 
 .step-text {
+
     font-size: 11px;
 
     line-height: 1.5;
 
     color: #64748b;
+
 }
 
 
-/* =========================
+/* =====================================================
    ABOUT PAGE
-========================= */
+===================================================== */
 
 .about-header {
+
     text-align: center;
 
     margin-bottom: 30px;
+
 }
 
 .about-header h2 {
-    font-size: 38px;
+
+    font-size:
+        clamp(32px,5vw,44px);
 
     margin:
         0
         0
         10px;
+
+    letter-spacing: -1.5px;
+
 }
 
 .about-header p {
+
     color: #94a3b8;
 
     max-width: 650px;
 
     margin: auto;
 
-    line-height: 1.6;
+    line-height: 1.7;
+
+    font-size: 14px;
+
 }
 
 .about-grid {
+
     display: grid;
 
     grid-template-columns:
         repeat(2,1fr);
 
     gap: 20px;
+
 }
 
 .about-card {
+
     background:
         rgba(15,23,42,.82);
 
@@ -759,24 +1287,42 @@ input[type="file"] {
     border-radius: 22px;
 
     padding: 24px;
+
+    transition: .25s ease;
+
+}
+
+.about-card:hover {
+
+    border-color:
+        rgba(96,165,250,.22);
+
+    transform:
+        translateY(-2px);
+
 }
 
 .about-icon {
-    font-size: 28px;
+
+    font-size: 27px;
 
     margin-bottom: 12px;
+
 }
 
 .about-card h3 {
+
     margin:
         0
         0
         8px;
 
     font-size: 17px;
+
 }
 
 .about-card p {
+
     margin: 0;
 
     color: #94a3b8;
@@ -784,38 +1330,47 @@ input[type="file"] {
     line-height: 1.7;
 
     font-size: 13px;
+
 }
 
 .tech-list {
+
     display: grid;
 
-    gap: 10px;
+    gap: 9px;
 
     margin-top: 15px;
+
 }
 
 .tech-item {
-    padding: 12px;
 
-    border-radius: 12px;
+    padding: 11px;
 
-    background: #111c2e;
+    border-radius: 11px;
+
+    background:
+        #111c2e;
 
     color: #cbd5e1;
 
-    font-size: 13px;
+    font-size: 12px;
+
 }
 
 .tech-item strong {
+
     color: #60a5fa;
+
 }
 
 
-/* =========================
+/* =====================================================
    FOOTER
-========================= */
+===================================================== */
 
 .footer {
+
     text-align: center;
 
     margin-top: 35px;
@@ -825,61 +1380,109 @@ input[type="file"] {
     font-size: 11px;
 
     line-height: 1.6;
+
 }
 
 .disclaimer {
+
     max-width: 700px;
 
     margin:
         0
         auto
         12px;
+
 }
 
 
-/* =========================
+/* =====================================================
    MOBILE
-========================= */
+===================================================== */
 
 @media(max-width:760px) {
 
     .app {
+
         padding:
             20px
             13px
             45px;
+
     }
 
     .navbar {
+
         align-items: flex-start;
 
         gap: 15px;
 
         flex-direction: column;
+
     }
 
     .nav-buttons {
+
         width: 100%;
+
     }
 
     .nav-button {
+
         flex: 1;
+
     }
 
     .main-grid {
+
         grid-template-columns: 1fr;
+
     }
 
     .how-grid {
+
         grid-template-columns: 1fr;
+
     }
 
     .about-grid {
+
         grid-template-columns: 1fr;
+
     }
 
     .hero h1 {
-        font-size: 38px;
+
+        font-size: 39px;
+
+    }
+
+}
+
+
+/* =====================================================
+   SMALL PHONES
+===================================================== */
+
+@media(max-width:420px) {
+
+    .card {
+
+        padding: 18px;
+
+        border-radius: 20px;
+
+    }
+
+    .hero h1 {
+
+        font-size: 34px;
+
+    }
+
+    .class-card {
+
+        padding: 14px;
+
     }
 
 }
@@ -895,11 +1498,12 @@ input[type="file"] {
 <div class="app">
 
 
-<!-- =========================
+<!-- =====================================================
      NAVBAR
-========================= -->
+===================================================== -->
 
 <div class="navbar">
+
 
     <div class="brand">
 
@@ -935,6 +1539,7 @@ input[type="file"] {
 
     </div>
 
+
 </div>
 
 
@@ -949,10 +1554,12 @@ input[type="file"] {
 >
 
 
+    <!-- HERO -->
+
     <div class="hero">
 
         <div class="hero-badge">
-            AI-POWERED IMAGE CLASSIFICATION
+            AI-POWERED BRAIN IMAGE CLASSIFICATION
         </div>
 
 
@@ -976,28 +1583,34 @@ input[type="file"] {
 
 
 
+    <!-- MAIN GRID -->
+
     <div class="main-grid">
 
 
-        <!-- =========================
-             UPLOAD
-        ========================= -->
+        <!-- =================================================
+             UPLOAD CARD
+        ================================================= -->
 
         <div class="card">
+
 
             <div class="card-title">
                 Analyze a Brain Scan
             </div>
+
 
             <div class="card-description">
                 Upload an image to begin AI classification.
             </div>
 
 
+
             <div
                 class="upload-area"
                 onclick="document.getElementById('imageInput').click()"
             >
+
 
                 <div class="upload-icon">
                     🧠
@@ -1029,13 +1642,18 @@ input[type="file"] {
                     accept="image/*"
                 >
 
+
             </div>
 
+
+
+            <!-- PREVIEW -->
 
             <div
                 class="preview-wrapper"
                 id="previewWrapper"
             >
+
 
                 <div class="preview-label">
                     SELECTED SCAN
@@ -1051,8 +1669,12 @@ input[type="file"] {
 
                 </div>
 
+
             </div>
 
+
+
+            <!-- ANALYZE -->
 
             <button
                 class="analyze-button"
@@ -1065,6 +1687,9 @@ input[type="file"] {
 
             </button>
 
+
+
+            <!-- STATUS -->
 
             <div class="status">
 
@@ -1080,18 +1705,20 @@ input[type="file"] {
 
             </div>
 
+
         </div>
 
 
 
-        <!-- =========================
-             RESULT
-        ========================= -->
+        <!-- =================================================
+             RESULT CARD
+        ================================================= -->
 
         <div
             class="card result-card"
             id="resultCard"
         >
+
 
             <div class="result-badge">
                 AI CLASSIFICATION
@@ -1105,6 +1732,9 @@ input[type="file"] {
                 —
             </div>
 
+
+
+            <!-- CONFIDENCE -->
 
             <div class="confidence-header">
 
@@ -1133,19 +1763,337 @@ input[type="file"] {
             </div>
 
 
-            <div class="breakdown">
 
-                <div class="breakdown-title">
-                    Classification breakdown
+            <!-- =================================================
+                 CLASSIFICATION OVERVIEW
+            ================================================= -->
+
+            <div class="classification-section">
+
+
+                <div class="classification-heading">
+
+                    <div class="classification-title">
+                        Classification Overview
+                    </div>
+
+
+                    <div class="classification-subtitle">
+                        AI result highlighted
+                    </div>
+
                 </div>
 
 
-                <div
-                    id="breakdownContainer"
-                ></div>
+
+                <div class="class-list">
+
+
+                    <!-- MENINGIOMA -->
+
+                    <div
+                        class="class-card"
+                        id="card-Meningioma"
+                    >
+
+                        <div class="class-top">
+
+
+                            <div class="class-name-wrapper">
+
+                                <div class="class-icon">
+                                    🧠
+                                </div>
+
+
+                                <div class="class-name">
+                                    Meningioma
+                                </div>
+
+                            </div>
+
+
+                            <div class="predicted-badge">
+                                PREDICTED
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="class-description">
+
+                            A tumor that develops from the meninges,
+                            the protective layers surrounding the
+                            brain and spinal cord.
+
+                        </div>
+
+
+                        <div class="class-confidence">
+
+                            <div class="class-confidence-header">
+
+                                <span>
+                                    Model probability
+                                </span>
+
+
+                                <span
+                                    class="class-confidence-value"
+                                    id="confidence-Meningioma"
+                                >
+                                    0%
+                                </span>
+
+                            </div>
+
+
+                            <div class="class-confidence-track">
+
+                                <div
+                                    class="class-confidence-fill"
+                                    id="fill-Meningioma"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- GLIOMA -->
+
+                    <div
+                        class="class-card"
+                        id="card-Glioma"
+                    >
+
+                        <div class="class-top">
+
+
+                            <div class="class-name-wrapper">
+
+                                <div class="class-icon">
+                                    🔬
+                                </div>
+
+
+                                <div class="class-name">
+                                    Glioma
+                                </div>
+
+                            </div>
+
+
+                            <div class="predicted-badge">
+                                PREDICTED
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="class-description">
+
+                            A group of tumors that arise from
+                            glial cells within the central
+                            nervous system.
+
+                        </div>
+
+
+                        <div class="class-confidence">
+
+                            <div class="class-confidence-header">
+
+                                <span>
+                                    Model probability
+                                </span>
+
+
+                                <span
+                                    class="class-confidence-value"
+                                    id="confidence-Glioma"
+                                >
+                                    0%
+                                </span>
+
+                            </div>
+
+
+                            <div class="class-confidence-track">
+
+                                <div
+                                    class="class-confidence-fill"
+                                    id="fill-Glioma"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PITUITARY -->
+
+                    <div
+                        class="class-card"
+                        id="card-Pituitary Tumor"
+                    >
+
+                        <div class="class-top">
+
+
+                            <div class="class-name-wrapper">
+
+                                <div class="class-icon">
+                                    🧬
+                                </div>
+
+
+                                <div class="class-name">
+                                    Pituitary Tumor
+                                </div>
+
+                            </div>
+
+
+                            <div class="predicted-badge">
+                                PREDICTED
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="class-description">
+
+                            An abnormal growth that develops in
+                            the pituitary gland, a small gland
+                            located at the base of the brain.
+
+                        </div>
+
+
+                        <div class="class-confidence">
+
+                            <div class="class-confidence-header">
+
+                                <span>
+                                    Model probability
+                                </span>
+
+
+                                <span
+                                    class="class-confidence-value"
+                                    id="confidence-Pituitary Tumor"
+                                >
+                                    0%
+                                </span>
+
+                            </div>
+
+
+                            <div class="class-confidence-track">
+
+                                <div
+                                    class="class-confidence-fill"
+                                    id="fill-Pituitary Tumor"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- NO TUMOR -->
+
+                    <div
+                        class="class-card"
+                        id="card-No Tumor"
+                    >
+
+                        <div class="class-top">
+
+
+                            <div class="class-name-wrapper">
+
+                                <div class="class-icon">
+                                    ✓
+                                </div>
+
+
+                                <div class="class-name">
+                                    No Tumor
+                                </div>
+
+                            </div>
+
+
+                            <div class="predicted-badge">
+                                PREDICTED
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="class-description">
+
+                            The image is classified by the trained
+                            model as belonging to the non-tumor class.
+
+                        </div>
+
+
+                        <div class="class-confidence">
+
+                            <div class="class-confidence-header">
+
+                                <span>
+                                    Model probability
+                                </span>
+
+
+                                <span
+                                    class="class-confidence-value"
+                                    id="confidence-No Tumor"
+                                >
+                                    0%
+                                </span>
+
+                            </div>
+
+
+                            <div class="class-confidence-track">
+
+                                <div
+                                    class="class-confidence-fill"
+                                    id="fill-No Tumor"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
 
             </div>
 
+
+
+            <!-- RESET -->
 
             <button
                 class="reset-button"
@@ -1156,21 +2104,25 @@ input[type="file"] {
 
             </button>
 
+
         </div>
+
 
     </div>
 
 
 
-    <!-- =========================
+    <!-- =================================================
          HOW IT WORKS
-    ========================= -->
+    ================================================= -->
 
     <div class="card how-card">
+
 
         <div class="card-title">
             How BrainScan AI Works
         </div>
+
 
         <div class="card-description">
             Three simple steps from image to AI classification.
@@ -1186,15 +2138,21 @@ input[type="file"] {
                     01
                 </div>
 
+
                 <div class="step-title">
                     Upload
                 </div>
 
+
                 <div class="step-text">
-                    Select a brain scan image from your device.
+
+                    Select a brain scan image
+                    from your device.
+
                 </div>
 
             </div>
+
 
 
             <div class="step">
@@ -1203,15 +2161,21 @@ input[type="file"] {
                     02
                 </div>
 
+
                 <div class="step-title">
                     Analyze
                 </div>
 
+
                 <div class="step-text">
-                    The trained AI model processes the selected image.
+
+                    The trained AI model processes
+                    the selected image.
+
                 </div>
 
             </div>
+
 
 
             <div class="step">
@@ -1220,18 +2184,24 @@ input[type="file"] {
                     03
                 </div>
 
+
                 <div class="step-title">
                     Result
                 </div>
 
+
                 <div class="step-text">
-                    View the predicted class and model confidence.
+
+                    View the predicted class
+                    and model confidence.
+
                 </div>
 
             </div>
 
 
         </div>
+
 
     </div>
 
@@ -1252,6 +2222,7 @@ input[type="file"] {
 
     <div class="about-header">
 
+
         <div class="hero-badge">
             ABOUT THE PROJECT
         </div>
@@ -1270,6 +2241,7 @@ input[type="file"] {
 
         </p>
 
+
     </div>
 
 
@@ -1277,9 +2249,7 @@ input[type="file"] {
     <div class="about-grid">
 
 
-        <!-- =========================
-             WHAT IS IT
-        ========================= -->
+        <!-- WHAT IS IT -->
 
         <div class="about-card">
 
@@ -1287,9 +2257,11 @@ input[type="file"] {
                 🧠
             </div>
 
+
             <h3>
                 What is BrainScan AI?
             </h3>
+
 
             <p>
 
@@ -1304,9 +2276,7 @@ input[type="file"] {
 
 
 
-        <!-- =========================
-             HOW IT WORKS
-        ========================= -->
+        <!-- HOW IT WORKS -->
 
         <div class="about-card">
 
@@ -1314,9 +2284,11 @@ input[type="file"] {
                 ⚙️
             </div>
 
+
             <h3>
-                How does it work?
+                How Does It Work?
             </h3>
+
 
             <p>
 
@@ -1331,15 +2303,14 @@ input[type="file"] {
 
 
 
-        <!-- =========================
-             TECHNOLOGY
-        ========================= -->
+        <!-- TECHNOLOGY -->
 
         <div class="about-card">
 
             <div class="about-icon">
                 💻
             </div>
+
 
             <h3>
                 Technology Used
@@ -1348,28 +2319,38 @@ input[type="file"] {
 
             <div class="tech-list">
 
+
                 <div class="tech-item">
-                    <strong>Model:</strong>
+
+                    <strong>AI Model:</strong>
                     Google Teachable Machine
+
                 </div>
 
 
                 <div class="tech-item">
-                    <strong>Model format:</strong>
+
+                    <strong>Model Runtime:</strong>
                     TensorFlow.js
+
                 </div>
 
 
                 <div class="tech-item">
-                    <strong>Web interface:</strong>
+
+                    <strong>Web Interface:</strong>
                     HTML, CSS & JavaScript
+
                 </div>
 
 
                 <div class="tech-item">
-                    <strong>Mobile application:</strong>
+
+                    <strong>Mobile Application:</strong>
                     MIT App Inventor
+
                 </div>
+
 
             </div>
 
@@ -1377,9 +2358,7 @@ input[type="file"] {
 
 
 
-        <!-- =========================
-             PURPOSE
-        ========================= -->
+        <!-- PURPOSE -->
 
         <div class="about-card">
 
@@ -1387,17 +2366,19 @@ input[type="file"] {
                 🎯
             </div>
 
+
             <h3>
                 Project Purpose
             </h3>
+
 
             <p>
 
                 The purpose of this project is to explore the use of
                 artificial intelligence and image classification in
-                medical-imaging research. It demonstrates the complete
-                process from training an AI model to deploying it
-                through a user-friendly application interface.
+                medical-imaging research. It demonstrates the process
+                from training an AI model to deploying it through a
+                user-friendly application interface.
 
             </p>
 
@@ -1405,9 +2386,7 @@ input[type="file"] {
 
 
 
-        <!-- =========================
-             MODEL
-        ========================= -->
+        <!-- MODEL -->
 
         <div class="about-card">
 
@@ -1415,17 +2394,19 @@ input[type="file"] {
                 🤖
             </div>
 
+
             <h3>
                 About the AI Model
             </h3>
+
 
             <p>
 
                 The classification model was trained using labelled
                 image examples. During prediction, the model evaluates
                 the uploaded image and produces a probability for each
-                learned class. The displayed confidence represents
-                the model's calculated probability for its prediction.
+                learned class. The displayed confidence represents the
+                model's calculated probability for its prediction.
 
             </p>
 
@@ -1433,9 +2414,7 @@ input[type="file"] {
 
 
 
-        <!-- =========================
-             LIMITATIONS
-        ========================= -->
+        <!-- LIMITATION -->
 
         <div class="about-card">
 
@@ -1443,9 +2422,11 @@ input[type="file"] {
                 ⚠️
             </div>
 
+
             <h3>
                 Important Limitation
             </h3>
+
 
             <p>
 
@@ -1462,6 +2443,7 @@ input[type="file"] {
 
     </div>
 
+
 </div>
 
 
@@ -1471,6 +2453,7 @@ input[type="file"] {
 ===================================================== -->
 
 <div class="footer">
+
 
     <div class="disclaimer">
 
@@ -1484,6 +2467,7 @@ input[type="file"] {
 
 
     BrainScan AI • AI Image Classification Prototype
+
 
 </div>
 
@@ -1500,8 +2484,7 @@ input[type="file"] {
 
 
 /* =====================================================
-   TEACHABLE MACHINE MODEL
-   SAME MODEL URL
+   YOUR EXISTING TEACHABLE MACHINE MODEL
 ===================================================== */
 
 const MODEL_URL =
@@ -1522,19 +2505,19 @@ function showPage(page) {
 
 
     const homePage =
-    document.getElementById("homePage");
+        document.getElementById("homePage");
 
 
     const aboutPage =
-    document.getElementById("aboutPage");
+        document.getElementById("aboutPage");
 
 
     const homeNav =
-    document.getElementById("homeNav");
+        document.getElementById("homeNav");
 
 
     const aboutNav =
-    document.getElementById("aboutNav");
+        document.getElementById("aboutNav");
 
 
     if(page === "home") {
@@ -1551,7 +2534,6 @@ function showPage(page) {
 
 
     }
-
 
     else {
 
@@ -1571,6 +2553,7 @@ function showPage(page) {
 }
 
 
+
 /* =====================================================
    IMAGE SELECTION
 ===================================================== */
@@ -1583,7 +2566,7 @@ document
 
 
         const file =
-        event.target.files[0];
+            event.target.files[0];
 
 
         if(!file) {
@@ -1594,52 +2577,59 @@ document
 
 
         const reader =
-        new FileReader();
+            new FileReader();
 
 
         reader.onload =
-        function(e) {
+            function(e) {
 
 
-            imageElement =
-            document.getElementById("preview");
+                imageElement =
+                    document.getElementById(
+                        "preview"
+                    );
 
 
-            imageElement.src =
-            e.target.result;
+                imageElement.src =
+                    e.target.result;
 
 
-            document
-            .getElementById("previewWrapper")
-            .style.display =
-            "block";
+                document
+                    .getElementById(
+                        "previewWrapper"
+                    )
+                    .style.display =
+                    "block";
 
 
-            document
-            .getElementById("analyzeButton")
-            .disabled =
-            false;
+                document
+                    .getElementById(
+                        "analyzeButton"
+                    )
+                    .disabled =
+                    false;
 
 
-            document
-            .getElementById("statusText")
-            .innerText =
-            "Image ready. Tap Analyze Scan.";
+                document
+                    .getElementById(
+                        "statusText"
+                    )
+                    .innerText =
+                    "Image ready. Tap Analyze Scan.";
 
 
-            document
-            .getElementById("resultCard")
-            .style.display =
-            "block";
+                document
+                    .getElementById(
+                        "resultCard"
+                    )
+                    .style.display =
+                    "none";
 
 
-            document
-            .getElementById("resultCard")
-            .style.display =
-            "none";
+                clearHighlights();
 
 
-        };
+            };
 
 
         reader.readAsDataURL(file);
@@ -1661,9 +2651,9 @@ async function analyzeImage() {
 
 
         document
-        .getElementById("statusText")
-        .innerText =
-        "Please select an image first.";
+            .getElementById("statusText")
+            .innerText =
+            "Please select an image first.";
 
 
         return;
@@ -1672,178 +2662,191 @@ async function analyzeImage() {
 
 
     const button =
-    document
-    .getElementById("analyzeButton");
+        document
+            .getElementById(
+                "analyzeButton"
+            );
 
 
     const spinner =
-    document
-    .getElementById("spinner");
+        document
+            .getElementById(
+                "spinner"
+            );
 
 
     button.disabled =
-    true;
+        true;
 
 
     spinner.style.display =
-    "block";
+        "block";
 
 
     document
-    .getElementById("statusText")
-    .innerText =
-    "Analyzing scan...";
+        .getElementById(
+            "statusText"
+        )
+        .innerText =
+        "Analyzing scan...";
 
 
     try {
 
 
         /* ==========================================
-           LOAD MODEL
-           SAME MODEL CONNECTION
+           LOAD YOUR EXISTING MODEL
         ========================================== */
 
         if(!model) {
 
 
             model =
-            await tmImage.load(
+                await tmImage.load(
 
-                MODEL_URL +
-                "model.json",
+                    MODEL_URL +
+                    "model.json",
 
-                MODEL_URL +
-                "metadata.json"
+                    MODEL_URL +
+                    "metadata.json"
 
-            );
+                );
 
         }
 
 
         /* ==========================================
-           PREDICT
+           YOUR EXISTING PREDICTION METHOD
         ========================================== */
 
         const predictions =
-        await model.predict(
-            imageElement
-        );
+            await model.predict(
+                imageElement
+            );
 
 
         /* ==========================================
-           SORT
+           SORT PREDICTIONS
         ========================================== */
 
         predictions.sort(
 
             (a,b) =>
-            b.probability -
-            a.probability
+                b.probability -
+                a.probability
 
         );
 
 
         const best =
-        predictions[0];
+            predictions[0];
 
 
         const confidence =
-        best.probability * 100;
+            best.probability * 100;
 
-
-        /* ==========================================
-           DISPLAY RESULT
-        ========================================== */
-
-        document
-        .getElementById("prediction")
-        .innerText =
-        best.className;
-
-
-        document
-        .getElementById("confidenceText")
-        .innerText =
-        confidence.toFixed(1) +
-        "%";
-
-
-        document
-        .getElementById("confidenceFill")
-        .style.width =
-        confidence +
-        "%";
-
-
-        document
-        .getElementById("resultCard")
-        .style.display =
-        "block";
 
 
         /* ==========================================
-           BREAKDOWN
+           MAIN RESULT
         ========================================== */
 
-        const container =
         document
-        .getElementById(
-            "breakdownContainer"
+            .getElementById(
+                "prediction"
+            )
+            .innerText =
+            best.className;
+
+
+        document
+            .getElementById(
+                "confidenceText"
+            )
+            .innerText =
+            confidence.toFixed(1) +
+            "%";
+
+
+        document
+            .getElementById(
+                "confidenceFill"
+            )
+            .style.width =
+            confidence +
+            "%";
+
+
+        document
+            .getElementById(
+                "resultCard"
+            )
+            .style.display =
+            "block";
+
+
+
+        /* ==========================================
+           HIGHLIGHT PREDICTED CLASS
+        ========================================== */
+
+        clearHighlights();
+
+
+        highlightPrediction(
+            best.className
         );
 
 
-        container.innerHTML =
-        "";
 
+        /* ==========================================
+           UPDATE ALL CLASS PROBABILITIES
+        ========================================== */
 
         predictions.forEach(
 
             prediction => {
 
 
+                const className =
+                    prediction.className;
+
+
                 const percentage =
-                prediction.probability *
-                100;
+                    prediction.probability *
+                    100;
 
 
-                const row =
-                document.createElement(
-                    "div"
-                );
+                const confidenceElement =
+                    document.getElementById(
+                        "confidence-" +
+                        className
+                    );
 
 
-                row.className =
-                "class-row";
+                const fillElement =
+                    document.getElementById(
+                        "fill-" +
+                        className
+                    );
 
 
-                row.innerHTML = `
+                if(confidenceElement) {
 
-                    <div class="class-top">
+                    confidenceElement.innerText =
+                        percentage.toFixed(1) +
+                        "%";
 
-                        <span class="class-name">
-                            ${prediction.className}
-                        </span>
-
-                        <span class="class-percent">
-                            ${percentage.toFixed(1)}%
-                        </span>
-
-                    </div>
+                }
 
 
-                    <div class="class-track">
+                if(fillElement) {
 
-                        <div
-                            class="class-fill"
-                            style="width:${percentage}%"
-                        ></div>
+                    fillElement.style.width =
+                        percentage +
+                        "%";
 
-                    </div>
-
-                `;
-
-
-                container.appendChild(row);
+                }
 
 
             }
@@ -1852,9 +2855,11 @@ async function analyzeImage() {
 
 
         document
-        .getElementById("statusText")
-        .innerText =
-        "Analysis complete.";
+            .getElementById(
+                "statusText"
+            )
+            .innerText =
+            "Analysis complete.";
 
 
     }
@@ -1867,20 +2872,98 @@ async function analyzeImage() {
 
 
         document
-        .getElementById("statusText")
-        .innerText =
-        "Unable to analyze this image. Please try again.";
+            .getElementById(
+                "statusText"
+            )
+            .innerText =
+            "Unable to analyze this image. Please try again.";
 
 
     }
 
 
     spinner.style.display =
-    "none";
+        "none";
 
 
     button.disabled =
-    false;
+        false;
+
+
+}
+
+
+
+/* =====================================================
+   HIGHLIGHT PREDICTION
+===================================================== */
+
+function highlightPrediction(className) {
+
+
+    const card =
+        document.getElementById(
+            "card-" + className
+        );
+
+
+    if(card) {
+
+
+        card.classList.add(
+            "predicted"
+        );
+
+
+        setTimeout(
+
+            function() {
+
+                card.scrollIntoView({
+
+                    behavior: "smooth",
+
+                    block: "nearest"
+
+                });
+
+            },
+
+            150
+
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   CLEAR HIGHLIGHTS
+===================================================== */
+
+function clearHighlights() {
+
+
+    const cards =
+        document.querySelectorAll(
+            ".class-card"
+        );
+
+
+    cards.forEach(
+
+        card => {
+
+            card.classList.remove(
+                "predicted"
+            );
+
+        }
+
+    );
+
 
 }
 
@@ -1894,49 +2977,59 @@ function resetScan() {
 
 
     document
-    .getElementById("imageInput")
-    .value =
-    "";
+        .getElementById(
+            "imageInput"
+        )
+        .value =
+        "";
 
 
     imageElement =
-    null;
+        null;
 
 
     document
-    .getElementById("previewWrapper")
-    .style.display =
-    "none";
+        .getElementById(
+            "previewWrapper"
+        )
+        .style.display =
+        "none";
 
 
     document
-    .getElementById("resultCard")
-    .style.display =
-    "none";
+        .getElementById(
+            "resultCard"
+        )
+        .style.display =
+        "none";
 
 
     document
-    .getElementById("analyzeButton")
-    .disabled =
-    true;
+        .getElementById(
+            "analyzeButton"
+        )
+        .disabled =
+        true;
 
 
     document
-    .getElementById("statusText")
-    .innerText =
-    "Select an image to begin.";
+        .getElementById(
+            "statusText"
+        )
+        .innerText =
+        "Select an image to begin.";
 
 
     document
-    .getElementById("confidenceFill")
-    .style.width =
-    "0%";
+        .getElementById(
+            "confidenceFill"
+        )
+        .style.width =
+        "0%";
 
 
-    document
-    .getElementById("breakdownContainer")
-    .innerHTML =
-    "";
+    clearHighlights();
+
 
 }
 
@@ -1946,3 +3039,4 @@ function resetScan() {
 </body>
 
 </html>
+```
