@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,11 +10,6 @@ content="width=device-width, initial-scale=1.0">
 
 <title>BrainScan AI</title>
 
-
-<!-- =====================================================
-     TEACHABLE MACHINE / TENSORFLOW
-===================================================== -->
-
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
@@ -23,12 +17,14 @@ content="width=device-width, initial-scale=1.0">
 
 <style>
 
-/* =====================================================
-   GLOBAL
-===================================================== */
+/* =========================================================
+   RESET
+========================================================= */
 
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 html {
@@ -37,56 +33,127 @@ html {
 
 body {
 
-    margin: 0;
-
     font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
-        Roboto,
-        Arial,
         sans-serif;
 
-    background:
-        radial-gradient(
-            circle at 15% 0%,
-            #172554 0%,
-            #0b1220 38%,
-            #070c15 100%
-        );
+    background: #030712;
 
     color: #f8fafc;
 
     min-height: 100vh;
 
+    overflow-x: hidden;
+
 }
 
 
-/* =====================================================
-   APP
-===================================================== */
+/* =========================================================
+   INTERACTIVE BACKGROUND
+========================================================= */
 
-.app {
+#backgroundCanvas {
+
+    position: fixed;
+
+    inset: 0;
 
     width: 100%;
+    height: 100%;
 
-    max-width: 1100px;
+    z-index: -5;
 
-    margin: auto;
+    pointer-events: none;
 
-    padding:
-        25px
-        20px
-        60px;
+}
+
+.background-gradient {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: -6;
+
+    pointer-events: none;
+
+    background:
+
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(37,99,235,.18),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 80% 30%,
+            rgba(124,58,237,.15),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 50% 100%,
+            rgba(6,182,212,.10),
+            transparent 35%
+        ),
+
+        #030712;
 
 }
 
 
-/* =====================================================
-   NAVBAR
-===================================================== */
+/* Cursor spotlight */
+
+.cursor-glow {
+
+    position: fixed;
+
+    width: 420px;
+
+    height: 420px;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    z-index: -2;
+
+    transform:
+        translate(-50%, -50%);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(59,130,246,.10) 0%,
+            rgba(59,130,246,.04) 25%,
+            transparent 70%
+        );
+
+    transition:
+        left .08s linear,
+        top .08s linear;
+
+}
+
+
+/* =========================================================
+   TOP NAV
+========================================================= */
 
 .navbar {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+
+    height: 74px;
 
     display: flex;
 
@@ -94,9 +161,22 @@ body {
 
     justify-content: space-between;
 
-    margin-bottom: 45px;
+    padding:
+        0
+        30px;
+
+    border-bottom:
+        1px solid
+        rgba(148,163,184,.08);
+
+    background:
+        rgba(3,7,18,.72);
+
+    backdrop-filter:
+        blur(22px);
 
 }
+
 
 .brand {
 
@@ -106,15 +186,18 @@ body {
 
     gap: 12px;
 
+    cursor: pointer;
+
 }
 
-.brand-icon {
 
-    width: 45px;
+.logo {
 
-    height: 45px;
+    position: relative;
 
-    border-radius: 14px;
+    width: 43px;
+
+    height: 43px;
 
     display: flex;
 
@@ -122,50 +205,97 @@ body {
 
     justify-content: center;
 
+    border-radius: 13px;
+
     background:
         linear-gradient(
             135deg,
             #2563eb,
-            #4f46e5
+            #7c3aed
         );
 
-    font-size: 23px;
-
     box-shadow:
-        0 8px 25px
-        rgba(37,99,235,.35);
+        0 0 30px
+        rgba(59,130,246,.3);
+
+    font-size: 21px;
 
 }
 
-.brand-name {
 
-    font-size: 20px;
+.logo::after {
 
-    font-weight: 750;
+    content: "";
 
-    letter-spacing: -.4px;
+    position: absolute;
+
+    inset: -2px;
+
+    border-radius: inherit;
+
+    border:
+        1px solid
+        rgba(96,165,250,.4);
+
+    animation:
+        logoPulse 2.5s infinite;
 
 }
 
-.nav-buttons {
+@keyframes logoPulse {
+
+    0%,100% {
+        opacity: .3;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.08);
+    }
+
+}
+
+
+.brand-text {
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    letter-spacing: -.5px;
+
+}
+
+.brand-text span {
+
+    color: #60a5fa;
+
+}
+
+
+.nav-links {
 
     display: flex;
 
-    gap: 7px;
+    gap: 6px;
 
 }
 
-.nav-button {
 
-    border: 1px solid transparent;
+.nav-btn {
+
+    position: relative;
+
+    border: none;
 
     background: transparent;
 
     color: #94a3b8;
 
     padding:
-        9px
-        15px;
+        10px
+        17px;
 
     border-radius: 10px;
 
@@ -173,38 +303,89 @@ body {
 
     font-size: 13px;
 
-    font-weight: 600;
+    font-weight: 650;
 
-    transition: .2s ease;
+    transition:
+        .25s ease;
 
 }
 
-.nav-button:hover {
 
-    background: #172033;
+.nav-btn:hover {
 
     color: white;
 
-}
-
-.nav-button.active {
-
-    background: #172554;
-
-    color: #60a5fa;
-
-    border-color: #263c69;
+    background:
+        rgba(59,130,246,.08);
 
 }
 
 
-/* =====================================================
-   PAGE SYSTEM
-===================================================== */
+.nav-btn.active {
+
+    color: #fff;
+
+}
+
+
+.nav-btn.active::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 18px;
+
+    right: 18px;
+
+    bottom: 3px;
+
+    height: 2px;
+
+    border-radius: 5px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #3b82f6,
+            #8b5cf6
+        );
+
+    box-shadow:
+        0 0 10px
+        rgba(96,165,250,.8);
+
+}
+
+
+/* =========================================================
+   APP CONTAINER
+========================================================= */
+
+.app {
+
+    width: min(1180px, 100%);
+
+    margin: auto;
+
+    padding:
+        55px
+        22px
+        70px;
+
+}
+
+
+/* =========================================================
+   PAGES
+========================================================= */
 
 .page {
 
     display: none;
+
+    animation:
+        pageIn .5s ease;
 
 }
 
@@ -214,69 +395,152 @@ body {
 
 }
 
+@keyframes pageIn {
 
-/* =====================================================
-   HERO
-===================================================== */
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
 
-.hero {
-
-    text-align: center;
-
-    margin-bottom: 38px;
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 
 }
 
-.hero-badge {
 
-    display: inline-block;
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+
+    position: relative;
+
+    text-align: center;
 
     padding:
-        7px
-        13px;
+        35px
+        0
+        55px;
 
-    border-radius: 30px;
+}
+
+
+.hero::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+
+    height: 250px;
+
+    left: 50%;
+
+    top: 20px;
+
+    transform:
+        translateX(-50%);
 
     background:
-        rgba(37,99,235,.12);
+        radial-gradient(
+            ellipse,
+            rgba(37,99,235,.12),
+            transparent 70%
+        );
+
+    filter:
+        blur(20px);
+
+    z-index: -1;
+
+}
+
+
+.status-pill {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding:
+        8px
+        14px;
+
+    border-radius: 50px;
 
     border:
         1px solid
         rgba(96,165,250,.2);
 
+    background:
+        rgba(37,99,235,.07);
+
     color: #93c5fd;
 
-    font-size: 11px;
+    font-size: 10px;
 
-    font-weight: 700;
+    font-weight: 750;
 
-    letter-spacing: .4px;
+    letter-spacing: .7px;
 
-    margin-bottom: 16px;
+    margin-bottom: 22px;
 
 }
+
+
+.status-dot {
+
+    width: 7px;
+
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #22c55e;
+
+    box-shadow:
+        0 0 12px
+        #22c55e;
+
+    animation:
+        statusPulse 1.8s infinite;
+
+}
+
+@keyframes statusPulse {
+
+    50% {
+        opacity: .35;
+    }
+
+}
+
 
 .hero h1 {
 
     font-size:
-        clamp(38px,6vw,60px);
+        clamp(42px, 7vw, 76px);
 
-    line-height: 1.03;
+    line-height: .98;
 
-    margin:
-        0
-        0
-        15px;
+    letter-spacing: -4px;
 
-    letter-spacing: -2.5px;
+    font-weight: 850;
 
 }
 
-.hero h1 span {
+
+.gradient-text {
 
     background:
         linear-gradient(
-            90deg,
+            100deg,
             #60a5fa,
             #818cf8,
             #c084fc
@@ -290,136 +554,134 @@ body {
 
 }
 
+
 .hero p {
+
+    max-width: 680px;
+
+    margin:
+        22px
+        auto
+        0;
 
     color: #94a3b8;
 
-    max-width: 650px;
-
-    margin: auto;
+    line-height: 1.75;
 
     font-size: 15px;
-
-    line-height: 1.65;
 
 }
 
 
-/* =====================================================
+/* =========================================================
+   GLASS CARDS
+========================================================= */
+
+.glass {
+
+    position: relative;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15,23,42,.82),
+            rgba(8,15,29,.72)
+        );
+
+    border:
+        1px solid
+        rgba(148,163,184,.12);
+
+    border-radius: 25px;
+
+    box-shadow:
+        0 25px 80px
+        rgba(0,0,0,.28);
+
+    backdrop-filter:
+        blur(24px);
+
+    overflow: hidden;
+
+}
+
+
+.glass::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+
+    height: 180px;
+
+    top: -100px;
+
+    right: -80px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(59,130,246,.13),
+            transparent 70%
+        );
+
+    pointer-events: none;
+
+}
+
+
+/* =========================================================
    MAIN GRID
-===================================================== */
+========================================================= */
 
 .main-grid {
 
     display: grid;
 
     grid-template-columns:
-        1fr
-        1fr;
+        minmax(0, .92fr)
+        minmax(0, 1.08fr);
 
-    gap: 20px;
-
-}
-
-
-/* =====================================================
-   CARDS
-===================================================== */
-
-.card {
-
-    background:
-        rgba(15,23,42,.82);
-
-    border:
-        1px solid
-        rgba(148,163,184,.12);
-
-    border-radius: 24px;
-
-    padding: 24px;
-
-    backdrop-filter: blur(20px);
-
-    box-shadow:
-        0 20px 60px
-        rgba(0,0,0,.25);
-
-}
-
-.card-title {
-
-    font-size: 18px;
-
-    font-weight: 700;
-
-}
-
-.card-description {
-
-    color: #64748b;
-
-    font-size: 13px;
-
-    margin-top: 5px;
-
-    margin-bottom: 20px;
+    gap: 22px;
 
 }
 
 
-/* =====================================================
-   UPLOAD
-===================================================== */
+/* =========================================================
+   UPLOAD PANEL
+========================================================= */
 
-.upload-area {
+.upload-card {
 
-    border:
-        1.5px dashed
-        #334155;
-
-    border-radius: 20px;
-
-    padding:
-        42px
-        20px;
-
-    text-align: center;
-
-    cursor: pointer;
-
-    transition:
-        .25s ease;
-
-    background:
-        rgba(15,23,42,.45);
+    padding: 25px;
 
 }
 
-.upload-area:hover {
 
-    border-color: #3b82f6;
+.section-label {
 
-    background:
-        rgba(37,99,235,.06);
+    display: flex;
 
-    transform:
-        translateY(-1px);
+    align-items: center;
+
+    gap: 10px;
+
+    color: #f8fafc;
+
+    font-size: 16px;
+
+    font-weight: 750;
 
 }
 
-.upload-icon {
 
-    width: 65px;
+.section-label-icon {
 
-    height: 65px;
+    width: 33px;
 
-    border-radius: 20px;
-
-    margin:
-        0
-        auto
-        16px;
+    height: 33px;
 
     display: flex;
 
@@ -427,68 +689,217 @@ body {
 
     justify-content: center;
 
-    background: #172554;
+    border-radius: 10px;
 
-    font-size: 29px;
+    background:
+        rgba(37,99,235,.12);
 
-}
-
-.upload-title {
-
-    font-size: 16px;
-
-    font-weight: 650;
-
-    margin-bottom: 7px;
+    color: #60a5fa;
 
 }
 
-.upload-description {
+
+.section-subtitle {
+
+    margin:
+        7px
+        0
+        20px
+        43px;
 
     color: #64748b;
 
-    font-size: 13px;
-
-    margin-bottom: 20px;
+    font-size: 11px;
 
 }
 
-.upload-button {
+
+.drop-zone {
+
+    position: relative;
+
+    min-height: 280px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 25px;
+
+    border:
+        1px dashed
+        #334155;
+
+    border-radius: 20px;
+
+    background:
+        rgba(2,6,23,.45);
+
+    cursor: pointer;
+
+    transition:
+        .3s ease;
+
+}
+
+
+.drop-zone:hover,
+.drop-zone.dragging {
+
+    border-color:
+        #3b82f6;
+
+    background:
+        rgba(37,99,235,.07);
+
+    box-shadow:
+        inset 0 0 40px
+        rgba(37,99,235,.06);
+
+}
+
+
+.upload-orbit {
+
+    position: relative;
+
+    width: 76px;
+
+    height: 76px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-bottom: 18px;
+
+}
+
+
+.upload-orbit::before,
+.upload-orbit::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(96,165,250,.2);
+
+}
+
+
+.upload-orbit::after {
+
+    inset: -9px;
+
+    border-color:
+        rgba(139,92,246,.12);
+
+    animation:
+        orbitSpin 6s linear infinite;
+
+}
+
+@keyframes orbitSpin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+.upload-icon {
+
+    width: 58px;
+
+    height: 58px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(37,99,235,.2),
+            rgba(124,58,237,.2)
+        );
+
+    font-size: 26px;
+
+}
+
+
+.drop-title {
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+}
+
+
+.drop-description {
+
+    margin-top: 7px;
+
+    color: #64748b;
+
+    font-size: 11px;
+
+}
+
+
+.choose-button {
 
     display: inline-block;
 
-    padding:
-        12px
-        20px;
+    margin-top: 18px;
 
-    border-radius: 12px;
+    padding:
+        11px
+        18px;
+
+    border-radius: 11px;
 
     background:
         linear-gradient(
             135deg,
             #2563eb,
-            #4f46e5
+            #7c3aed
         );
 
     color: white;
 
-    font-size: 14px;
+    font-size: 12px;
 
-    font-weight: 650;
-
-    cursor: pointer;
+    font-weight: 700;
 
     box-shadow:
         0 8px 25px
-        rgba(37,99,235,.22);
+        rgba(37,99,235,.2);
 
 }
 
-.upload-button:hover {
-
-    filter: brightness(1.1);
-
-}
 
 input[type="file"] {
 
@@ -497,31 +908,22 @@ input[type="file"] {
 }
 
 
-/* =====================================================
+/* =========================================================
    PREVIEW
-===================================================== */
+========================================================= */
 
 .preview-wrapper {
 
-    margin-top: 18px;
-
     display: none;
 
-}
-
-.preview-label {
-
-    font-size: 11px;
-
-    color: #64748b;
-
-    letter-spacing: .6px;
-
-    margin-bottom: 8px;
+    margin-top: 17px;
 
 }
 
-.preview-box {
+
+.preview-container {
+
+    position: relative;
 
     overflow: hidden;
 
@@ -529,11 +931,12 @@ input[type="file"] {
 
     border:
         1px solid
-        #263449;
+        rgba(96,165,250,.15);
 
     background: #020617;
 
 }
+
 
 #preview {
 
@@ -541,73 +944,144 @@ input[type="file"] {
 
     width: 100%;
 
-    max-height: 360px;
+    max-height: 330px;
 
     object-fit: contain;
 
 }
 
 
-/* =====================================================
-   ANALYZE BUTTON
-===================================================== */
+.scan-line {
 
-.analyze-button {
+    position: absolute;
 
-    width: 100%;
+    left: 0;
 
-    border: none;
+    right: 0;
 
-    margin-top: 18px;
+    top: -10%;
 
-    padding: 16px;
-
-    border-radius: 14px;
+    height: 2px;
 
     background:
         linear-gradient(
-            135deg,
-            #2563eb,
-            #4f46e5
+            90deg,
+            transparent,
+            #60a5fa,
+            #c084fc,
+            transparent
         );
+
+    box-shadow:
+        0 0 18px
+        #60a5fa;
+
+    opacity: .8;
+
+    animation:
+        scanMove 2.8s linear infinite;
+
+}
+
+@keyframes scanMove {
+
+    0% {
+        top: -5%;
+    }
+
+    100% {
+        top: 105%;
+    }
+
+}
+
+
+/* =========================================================
+   ANALYZE BUTTON
+========================================================= */
+
+.analyze-button {
+
+    position: relative;
+
+    width: 100%;
+
+    margin-top: 17px;
+
+    padding: 15px;
+
+    border: none;
+
+    border-radius: 13px;
 
     color: white;
 
-    font-size: 15px;
+    background:
+        linear-gradient(
+            100deg,
+            #2563eb,
+            #4f46e5,
+            #7c3aed
+        );
 
-    font-weight: 700;
+    background-size: 200% 100%;
+
+    font-size: 13px;
+
+    font-weight: 750;
 
     cursor: pointer;
 
-    transition: .2s ease;
+    transition:
+        .3s ease;
+
+    animation:
+        gradientMove 5s ease infinite;
 
 }
+
+
+@keyframes gradientMove {
+
+    0%,100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+}
+
 
 .analyze-button:hover:not(:disabled) {
 
     transform:
-        translateY(-1px);
+        translateY(-2px);
 
     box-shadow:
-        0 12px 30px
-        rgba(37,99,235,.25);
+        0 12px 35px
+        rgba(59,130,246,.25);
 
 }
+
 
 .analyze-button:disabled {
 
-    background: #1e293b;
+    background: #172033;
 
-    color: #64748b;
+    color: #475569;
 
     cursor: not-allowed;
+
+    animation: none;
 
 }
 
 
-/* =====================================================
+/* =========================================================
    STATUS
-===================================================== */
+========================================================= */
 
 .status {
 
@@ -619,23 +1093,28 @@ input[type="file"] {
 
     gap: 8px;
 
-    margin-top: 14px;
+    margin-top: 12px;
+
+    min-height: 17px;
 
     color: #64748b;
 
-    font-size: 12px;
+    font-size: 10px;
 
 }
 
+
 .spinner {
 
-    width: 14px;
+    display: none;
 
-    height: 14px;
+    width: 13px;
+
+    height: 13px;
 
     border:
         2px solid
-        #334155;
+        #263449;
 
     border-top-color:
         #60a5fa;
@@ -643,9 +1122,7 @@ input[type="file"] {
     border-radius: 50%;
 
     animation:
-        spin .8s linear infinite;
-
-    display: none;
+        spin .7s linear infinite;
 
 }
 
@@ -658,98 +1135,167 @@ input[type="file"] {
 }
 
 
-/* =====================================================
-   RESULT
-===================================================== */
+/* =========================================================
+   RESULT CARD
+========================================================= */
 
 .result-card {
+
+    padding: 25px;
 
     display: none;
 
 }
 
-.result-badge {
 
-    display: inline-block;
-
-    padding:
-        6px
-        10px;
-
-    border-radius: 8px;
-
-    background:
-        rgba(59,130,246,.1);
-
-    color: #60a5fa;
-
-    font-size: 10px;
-
-    font-weight: 750;
-
-    letter-spacing: .8px;
-
-    margin-bottom: 13px;
-
-}
-
-.prediction {
-
-    font-size:
-        clamp(28px,4vw,38px);
-
-    font-weight: 800;
-
-    line-height: 1.1;
-
-    margin-bottom: 20px;
-
-}
-
-
-/* =====================================================
-   CONFIDENCE
-===================================================== */
-
-.confidence-header {
+.result-top {
 
     display: flex;
 
     justify-content: space-between;
 
-    margin-bottom: 8px;
-
-    font-size: 13px;
+    align-items: flex-start;
 
 }
 
-.confidence-label {
 
-    color: #94a3b8;
+.ai-label {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: #60a5fa;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
 
 }
+
+
+.ai-label::before {
+
+    content: "";
+
+    width: 6px;
+
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #60a5fa;
+
+    box-shadow:
+        0 0 10px
+        #60a5fa;
+
+}
+
+
+.result-time {
+
+    color: #475569;
+
+    font-size: 9px;
+
+}
+
+
+.prediction {
+
+    margin-top: 13px;
+
+    font-size:
+        clamp(28px, 4vw, 42px);
+
+    line-height: 1;
+
+    font-weight: 850;
+
+    letter-spacing: -1.5px;
+
+}
+
+
+.prediction-glow {
+
+    color: #fff;
+
+    text-shadow:
+        0 0 25px
+        rgba(96,165,250,.25);
+
+}
+
+
+/* =========================================================
+   CONFIDENCE
+========================================================= */
+
+.confidence-box {
+
+    margin-top: 23px;
+
+    padding: 15px;
+
+    border-radius: 15px;
+
+    background:
+        rgba(2,6,23,.5);
+
+    border:
+        1px solid
+        rgba(148,163,184,.07);
+
+}
+
+
+.confidence-heading {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 9px;
+
+    font-size: 10px;
+
+}
+
+
+.confidence-heading span:first-child {
+
+    color: #64748b;
+
+}
+
 
 .confidence-value {
 
     color: #60a5fa;
 
-    font-weight: 750;
+    font-weight: 800;
 
 }
+
 
 .confidence-track {
 
-    width: 100%;
-
-    height: 9px;
-
-    background: #1e293b;
-
-    border-radius: 20px;
+    height: 7px;
 
     overflow: hidden;
 
+    border-radius: 10px;
+
+    background: #172033;
+
 }
+
 
 .confidence-fill {
 
@@ -757,96 +1303,134 @@ input[type="file"] {
 
     height: 100%;
 
-    border-radius: 20px;
+    border-radius: inherit;
 
     background:
         linear-gradient(
             90deg,
             #2563eb,
-            #818cf8
+            #818cf8,
+            #c084fc
         );
 
+    box-shadow:
+        0 0 15px
+        rgba(96,165,250,.5);
+
     transition:
-        width 1s ease;
+        width 1.2s cubic-bezier(.2,.8,.2,1);
 
 }
 
 
-/* =====================================================
-   CLASSIFICATION SECTION
-===================================================== */
+/* =========================================================
+   CLASSIFICATION OVERVIEW
+========================================================= */
 
-.classification-section {
+.classification {
 
-    margin-top: 30px;
+    margin-top: 22px;
 
 }
 
-.classification-heading {
+
+.classification-header {
 
     display: flex;
 
-    justify-content: space-between;
-
     align-items: center;
 
-    margin-bottom: 14px;
+    justify-content: space-between;
+
+    margin-bottom: 11px;
 
 }
+
 
 .classification-title {
 
-    font-size: 14px;
+    font-size: 13px;
 
-    font-weight: 700;
-
-}
-
-.classification-subtitle {
-
-    font-size: 10px;
-
-    color: #64748b;
+    font-weight: 750;
 
 }
 
 
-/* =====================================================
-   CLASS CARDS
-===================================================== */
+.classification-note {
+
+    color: #475569;
+
+    font-size: 9px;
+
+}
+
 
 .class-list {
 
     display: grid;
 
-    gap: 10px;
+    gap: 8px;
 
 }
+
 
 .class-card {
 
     position: relative;
 
-    padding:
-        16px;
+    padding: 12px 13px;
 
-    border-radius: 16px;
-
-    background:
-        rgba(30,41,59,.45);
+    border-radius: 14px;
 
     border:
         1px solid
-        rgba(148,163,184,.09);
+        rgba(148,163,184,.08);
+
+    background:
+        rgba(15,23,42,.5);
 
     transition:
-        .35s ease;
+        transform .3s ease,
+        border-color .3s ease,
+        background .3s ease,
+        box-shadow .3s ease;
 
     overflow: hidden;
 
 }
 
-.class-card::before {
+
+.class-card:hover {
+
+    transform:
+        translateX(3px);
+
+    border-color:
+        rgba(96,165,250,.18);
+
+}
+
+
+.class-card.predicted {
+
+    border-color:
+        rgba(96,165,250,.45);
+
+    background:
+        linear-gradient(
+            100deg,
+            rgba(37,99,235,.15),
+            rgba(124,58,237,.08)
+        );
+
+    box-shadow:
+        0 0 25px
+        rgba(37,99,235,.09);
+
+}
+
+
+.class-card.predicted::before {
 
     content: "";
 
@@ -861,68 +1445,16 @@ input[type="file"] {
     width: 3px;
 
     background:
-        transparent;
-
-    transition:
-        .35s ease;
-
-}
-
-.class-card:hover {
-
-    transform:
-        translateY(-1px);
-
-    background:
-        rgba(30,41,59,.65);
-
-}
-
-.class-card.predicted {
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(37,99,235,.17),
-            rgba(79,70,229,.12)
-        );
-
-    border-color:
-        rgba(96,165,250,.45);
-
-    box-shadow:
-        0 0 25px
-        rgba(37,99,235,.13);
-
-    transform:
-        translateY(-2px);
-
-}
-
-.class-card.predicted::before {
-
-    background:
         linear-gradient(
             180deg,
             #60a5fa,
-            #818cf8
+            #a78bfa
         );
 
 }
 
-.class-top {
 
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 10px;
-
-}
-
-.class-name-wrapper {
+.class-main {
 
     display: flex;
 
@@ -931,14 +1463,15 @@ input[type="file"] {
     gap: 10px;
 
 }
+
 
 .class-icon {
 
-    width: 34px;
+    width: 32px;
 
-    height: 34px;
+    height: 32px;
 
-    border-radius: 10px;
+    flex-shrink: 0;
 
     display: flex;
 
@@ -946,55 +1479,60 @@ input[type="file"] {
 
     justify-content: center;
 
+    border-radius: 9px;
+
     background:
-        #111c2e;
+        #111a2c;
 
-    font-size: 16px;
-
-    flex-shrink: 0;
+    font-size: 14px;
 
 }
+
 
 .predicted .class-icon {
 
     background:
-        #172554;
+        rgba(37,99,235,.2);
 
 }
+
 
 .class-name {
 
-    font-size: 13px;
-
-    font-weight: 700;
+    flex: 1;
 
     color: #cbd5e1;
 
+    font-size: 11px;
+
+    font-weight: 700;
+
 }
+
 
 .predicted .class-name {
 
-    color: #f8fafc;
+    color: white;
 
 }
 
-.predicted-badge {
+
+.predicted-tag {
 
     display: none;
 
     padding:
-        5px
-        8px;
+        4px
+        7px;
 
-    border-radius: 7px;
+    border-radius: 6px;
+
+    color: #60a5fa;
 
     background:
-        rgba(96,165,250,.12);
+        rgba(59,130,246,.1);
 
-    color:
-        #60a5fa;
-
-    font-size: 9px;
+    font-size: 8px;
 
     font-weight: 800;
 
@@ -1002,27 +1540,30 @@ input[type="file"] {
 
 }
 
-.predicted .predicted-badge {
 
-    display: inline-block;
+.predicted .predicted-tag {
+
+    display: block;
 
 }
+
 
 .class-description {
 
     margin:
-        9px
+        6px
         0
         0
-        44px;
+        42px;
 
     color: #64748b;
 
-    font-size: 11px;
+    font-size: 9.5px;
 
-    line-height: 1.55;
+    line-height: 1.5;
 
 }
+
 
 .predicted .class-description {
 
@@ -1030,48 +1571,56 @@ input[type="file"] {
 
 }
 
-.class-confidence {
+
+.class-probability {
 
     display: none;
 
-    margin-top: 12px;
+    margin:
+        9px
+        0
+        0
+        42px;
 
 }
 
-.predicted .class-confidence {
+
+.predicted .class-probability {
 
     display: block;
 
 }
 
-.class-confidence-header {
+
+.probability-top {
 
     display: flex;
 
     justify-content: space-between;
 
-    font-size: 10px;
+    margin-bottom: 4px;
 
-    color: #64748b;
+    color: #475569;
 
-    margin-bottom: 5px;
+    font-size: 8px;
 
 }
 
-.class-confidence-value {
+
+.probability-value {
 
     color: #60a5fa;
 
-    font-weight: 700;
+    font-weight: 750;
 
 }
 
-.class-confidence-track {
 
-    height: 5px;
+.probability-track {
 
-    background:
-        #1e293b;
+    height: 4px;
+
+    background: #1e293b;
 
     border-radius: 10px;
 
@@ -1079,86 +1628,122 @@ input[type="file"] {
 
 }
 
-.class-confidence-fill {
 
-    height: 100%;
+.probability-fill {
 
     width: 0%;
 
-    border-radius: 10px;
+    height: 100%;
 
     background:
         linear-gradient(
             90deg,
-            #2563eb,
-            #818cf8
+            #3b82f6,
+            #8b5cf6
         );
 
     transition:
-        width .8s ease;
+        width .9s ease;
 
 }
 
 
-/* =====================================================
-   RESET
-===================================================== */
+/* =========================================================
+   RESET BUTTON
+========================================================= */
 
 .reset-button {
 
     width: 100%;
 
-    margin-top: 20px;
+    margin-top: 14px;
 
-    padding: 13px;
+    padding: 11px;
 
     border:
         1px solid
-        #334155;
+        #263449;
 
-    background: transparent;
+    background:
+        rgba(15,23,42,.5);
 
-    color: #94a3b8;
+    color: #64748b;
 
-    border-radius: 12px;
+    border-radius: 11px;
+
+    font-size: 10px;
+
+    font-weight: 650;
 
     cursor: pointer;
-
-    font-weight: 600;
 
     transition: .2s ease;
 
 }
 
-.reset-button:hover {
 
-    background: #172033;
+.reset-button:hover {
 
     color: white;
 
+    border-color:
+        #3b82f6;
+
+    background:
+        rgba(37,99,235,.07);
+
 }
 
 
-/* =====================================================
+/* =========================================================
    HOW IT WORKS
-===================================================== */
+========================================================= */
 
-.how-card {
+.how-section {
 
-    margin-top: 20px;
+    margin-top: 22px;
+
+    padding: 24px;
 
 }
 
-.how-grid {
+
+.section-heading {
+
+    margin-bottom: 18px;
+
+}
+
+
+.section-heading h2 {
+
+    font-size: 17px;
+
+}
+
+
+.section-heading p {
+
+    margin-top: 5px;
+
+    color: #64748b;
+
+    font-size: 10px;
+
+}
+
+
+.steps {
 
     display: grid;
 
     grid-template-columns:
         repeat(3,1fr);
 
-    gap: 15px;
+    gap: 12px;
 
 }
+
 
 .step {
 
@@ -1167,21 +1752,37 @@ input[type="file"] {
     border-radius: 16px;
 
     background:
-        rgba(30,41,59,.45);
+        rgba(15,23,42,.45);
 
     border:
         1px solid
-        rgba(148,163,184,.08);
+        rgba(148,163,184,.07);
+
+    transition: .3s ease;
 
 }
 
+
+.step:hover {
+
+    transform:
+        translateY(-4px);
+
+    border-color:
+        rgba(96,165,250,.2);
+
+    box-shadow:
+        0 15px 35px
+        rgba(0,0,0,.18);
+
+}
+
+
 .step-number {
 
-    width: 32px;
+    width: 31px;
 
-    height: 32px;
-
-    border-radius: 10px;
+    height: 31px;
 
     display: flex;
 
@@ -1189,80 +1790,85 @@ input[type="file"] {
 
     justify-content: center;
 
+    border-radius: 9px;
+
+    color: #60a5fa;
+
     background:
-        #172554;
+        rgba(37,99,235,.1);
 
-    color:
-        #60a5fa;
+    font-size: 9px;
 
-    font-size: 11px;
-
-    font-weight: 750;
+    font-weight: 800;
 
     margin-bottom: 12px;
 
 }
 
-.step-title {
 
-    font-size: 13px;
+.step h3 {
 
-    font-weight: 700;
+    font-size: 12px;
 
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 
 }
 
-.step-text {
 
-    font-size: 11px;
-
-    line-height: 1.5;
+.step p {
 
     color: #64748b;
 
+    font-size: 9.5px;
+
+    line-height: 1.55;
+
 }
 
 
-/* =====================================================
+/* =========================================================
    ABOUT PAGE
-===================================================== */
+========================================================= */
 
-.about-header {
+.about-hero {
 
     text-align: center;
 
-    margin-bottom: 30px;
+    padding:
+        25px
+        0
+        35px;
 
 }
 
-.about-header h2 {
+
+.about-hero h1 {
 
     font-size:
-        clamp(32px,5vw,44px);
+        clamp(36px,5vw,55px);
 
-    margin:
-        0
-        0
-        10px;
-
-    letter-spacing: -1.5px;
+    letter-spacing: -2.5px;
 
 }
 
-.about-header p {
+
+.about-hero p {
+
+    max-width: 670px;
+
+    margin:
+        16px
+        auto
+        0;
 
     color: #94a3b8;
 
-    max-width: 650px;
+    font-size: 13px;
 
-    margin: auto;
-
-    line-height: 1.7;
-
-    font-size: 14px;
+    line-height: 1.75;
 
 }
+
 
 .about-grid {
 
@@ -1271,92 +1877,103 @@ input[type="file"] {
     grid-template-columns:
         repeat(2,1fr);
 
-    gap: 20px;
+    gap: 15px;
 
 }
+
 
 .about-card {
 
-    background:
-        rgba(15,23,42,.82);
+    padding: 23px;
 
-    border:
-        1px solid
-        rgba(148,163,184,.12);
-
-    border-radius: 22px;
-
-    padding: 24px;
-
-    transition: .25s ease;
+    transition:
+        transform .3s ease,
+        border-color .3s ease;
 
 }
+
 
 .about-card:hover {
 
-    border-color:
-        rgba(96,165,250,.22);
-
     transform:
-        translateY(-2px);
+        translateY(-4px);
+
+    border-color:
+        rgba(96,165,250,.2);
 
 }
+
 
 .about-icon {
 
-    font-size: 27px;
+    width: 43px;
 
-    margin-bottom: 12px;
+    height: 43px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background:
+        rgba(37,99,235,.1);
+
+    font-size: 20px;
+
+    margin-bottom: 15px;
 
 }
 
-.about-card h3 {
 
-    margin:
-        0
-        0
-        8px;
+.about-card h2 {
 
-    font-size: 17px;
+    font-size: 16px;
+
+    margin-bottom: 9px;
 
 }
+
 
 .about-card p {
 
-    margin: 0;
-
     color: #94a3b8;
+
+    font-size: 11px;
 
     line-height: 1.7;
 
-    font-size: 13px;
-
 }
+
 
 .tech-list {
 
     display: grid;
 
-    gap: 9px;
-
-    margin-top: 15px;
+    gap: 7px;
 
 }
+
 
 .tech-item {
 
-    padding: 11px;
+    padding:
+        9px
+        11px;
 
-    border-radius: 11px;
+    border-radius: 9px;
 
     background:
-        #111c2e;
+        rgba(2,6,23,.5);
 
-    color: #cbd5e1;
+    color: #94a3b8;
 
-    font-size: 12px;
+    font-size: 10px;
 
 }
+
 
 .tech-item strong {
 
@@ -1365,70 +1982,149 @@ input[type="file"] {
 }
 
 
-/* =====================================================
+/* =========================================================
+   MODEL INFO
+========================================================= */
+
+.model-panel {
+
+    margin-top: 15px;
+
+    padding: 23px;
+
+}
+
+
+.model-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    margin-bottom: 14px;
+
+}
+
+
+.model-status {
+
+    width: 10px;
+
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: #22c55e;
+
+    box-shadow:
+        0 0 12px
+        #22c55e;
+
+}
+
+
+.model-header h2 {
+
+    font-size: 15px;
+
+}
+
+
+.model-url {
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background:
+        #020617;
+
+    color: #64748b;
+
+    font-family: monospace;
+
+    font-size: 9px;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* =========================================================
    FOOTER
-===================================================== */
+========================================================= */
 
 .footer {
 
-    text-align: center;
+    margin-top: 55px;
 
-    margin-top: 35px;
+    padding-top: 25px;
+
+    border-top:
+        1px solid
+        rgba(148,163,184,.07);
+
+    text-align: center;
 
     color: #475569;
 
-    font-size: 11px;
+    font-size: 9px;
 
-    line-height: 1.6;
-
-}
-
-.disclaimer {
-
-    max-width: 700px;
-
-    margin:
-        0
-        auto
-        12px;
+    line-height: 1.7;
 
 }
 
 
-/* =====================================================
+.footer strong {
+
+    color: #64748b;
+
+}
+
+
+/* =========================================================
+   MOUSE TILT
+========================================================= */
+
+.tilt {
+
+    transform-style: preserve-3d;
+
+    will-change: transform;
+
+}
+
+
+/* =========================================================
    MOBILE
-===================================================== */
+========================================================= */
 
-@media(max-width:760px) {
+@media(max-width:800px) {
+
+    .navbar {
+
+        padding:
+            0
+            16px;
+
+    }
+
+    .nav-btn {
+
+        padding:
+            9px
+            10px;
+
+    }
 
     .app {
 
         padding:
-            20px
-            13px
-            45px;
-
-    }
-
-    .navbar {
-
-        align-items: flex-start;
-
-        gap: 15px;
-
-        flex-direction: column;
-
-    }
-
-    .nav-buttons {
-
-        width: 100%;
-
-    }
-
-    .nav-button {
-
-        flex: 1;
+            35px
+            14px
+            50px;
 
     }
 
@@ -1438,7 +2134,7 @@ input[type="file"] {
 
     }
 
-    .how-grid {
+    .steps {
 
         grid-template-columns: 1fr;
 
@@ -1450,38 +2146,67 @@ input[type="file"] {
 
     }
 
+}
+
+
+@media(max-width:500px) {
+
+    .brand-text {
+
+        display: none;
+
+    }
+
     .hero h1 {
 
-        font-size: 39px;
+        font-size: 42px;
+
+        letter-spacing: -2.5px;
+
+    }
+
+    .hero p {
+
+        font-size: 12px;
+
+    }
+
+    .upload-card,
+    .result-card,
+    .how-section,
+    .about-card,
+    .model-panel {
+
+        padding: 18px;
+
+    }
+
+    .drop-zone {
+
+        min-height: 250px;
 
     }
 
 }
 
 
-/* =====================================================
-   SMALL PHONES
-===================================================== */
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
 
-@media(max-width:420px) {
+@media(prefers-reduced-motion: reduce) {
 
-    .card {
+    *,
+    *::before,
+    *::after {
 
-        padding: 18px;
+        animation-duration: .01ms !important;
 
-        border-radius: 20px;
+        animation-iteration-count: 1 !important;
 
-    }
+        scroll-behavior: auto !important;
 
-    .hero h1 {
-
-        font-size: 34px;
-
-    }
-
-    .class-card {
-
-        padding: 14px;
+        transition-duration: .01ms !important;
 
     }
 
@@ -1495,60 +2220,81 @@ input[type="file"] {
 <body>
 
 
-<div class="app">
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
+
+<div class="background-gradient"></div>
+
+<canvas id="backgroundCanvas"></canvas>
+
+<div class="cursor-glow"
+     id="cursorGlow"></div>
+
 
 
 <!-- =====================================================
-     NAVBAR
+     NAVIGATION
 ===================================================== -->
 
-<div class="navbar">
+<nav class="navbar">
 
 
-    <div class="brand">
+    <div class="brand"
+         onclick="showPage('home')">
 
-        <div class="brand-icon">
+        <div class="logo">
             🧠
         </div>
 
-        <div class="brand-name">
-            BrainScan AI
+        <div class="brand-text">
+            Brain<span>Scan</span> AI
         </div>
 
     </div>
 
 
-    <div class="nav-buttons">
+    <div class="nav-links">
 
         <button
-            class="nav-button active"
+            class="nav-btn active"
             id="homeNav"
-            onclick="showPage('home')"
-        >
+            onclick="showPage('home')">
+
             Home
+
         </button>
 
 
         <button
-            class="nav-button"
+            class="nav-btn"
             id="aboutNav"
-            onclick="showPage('about')"
-        >
+            onclick="showPage('about')">
+
             About
+
         </button>
 
     </div>
 
 
-</div>
+</nav>
 
 
 
 <!-- =====================================================
-     HOME PAGE
+     APPLICATION
 ===================================================== -->
 
-<div
+<main class="app">
+
+
+
+<!-- =====================================================
+     HOME
+===================================================== -->
+
+<section
     class="page active"
     id="homePage"
 >
@@ -1558,81 +2304,115 @@ input[type="file"] {
 
     <div class="hero">
 
-        <div class="hero-badge">
-            AI-POWERED BRAIN IMAGE CLASSIFICATION
+
+        <div class="status-pill">
+
+            <span class="status-dot"></span>
+
+            AI MODEL ONLINE
+
         </div>
 
 
         <h1>
 
-            Intelligent
-            <span>Brain Scan</span>
-            Analysis
+            See Beyond the
+            <br>
+
+            <span class="gradient-text">
+                Scan.
+
+            </span>
 
         </h1>
 
 
         <p>
 
-            Upload a brain scan image and let the trained
-            BrainScan AI model classify the image.
+            BrainScan AI uses an image-classification model
+            to analyze uploaded brain scan images and identify
+            the classification the model finds most likely.
 
         </p>
+
 
     </div>
 
 
 
-    <!-- MAIN GRID -->
+    <!-- MAIN -->
 
     <div class="main-grid">
 
 
+
         <!-- =================================================
-             UPLOAD CARD
+             UPLOAD
         ================================================= -->
 
-        <div class="card">
+        <div
+            class="glass upload-card tilt"
+            data-tilt
+        >
 
 
-            <div class="card-title">
-                Analyze a Brain Scan
+            <div class="section-label">
+
+                <div class="section-label-icon">
+                    ↑
+                </div>
+
+                Scan Analysis
+
             </div>
 
 
-            <div class="card-description">
-                Upload an image to begin AI classification.
+            <div class="section-subtitle">
+
+                Upload an image to begin analysis.
+
             </div>
 
 
+
+            <!-- DROP ZONE -->
 
             <div
-                class="upload-area"
-                onclick="document.getElementById('imageInput').click()"
+                class="drop-zone"
+                id="dropZone"
             >
 
 
-                <div class="upload-icon">
-                    🧠
+                <div class="upload-orbit">
+
+                    <div class="upload-icon">
+                        🧠
+                    </div>
+
                 </div>
 
 
-                <div class="upload-title">
-                    Upload your scan
+                <div class="drop-title">
+
+                    Drop your scan here
+
                 </div>
 
 
-                <div class="upload-description">
-                    Select a brain scan image from your device
+                <div class="drop-description">
+
+                    PNG, JPG or other supported image formats
+
                 </div>
 
 
                 <label
-                    class="upload-button"
-                    onclick="event.stopPropagation()"
                     for="imageInput"
+                    class="choose-button"
                 >
+
                     Choose Image
+
                 </label>
 
 
@@ -1655,17 +2435,16 @@ input[type="file"] {
             >
 
 
-                <div class="preview-label">
-                    SELECTED SCAN
-                </div>
-
-
-                <div class="preview-box">
+                <div
+                    class="preview-container"
+                >
 
                     <img
                         id="preview"
-                        alt="Brain scan preview"
+                        alt="Selected brain scan"
                     >
+
+                    <div class="scan-line"></div>
 
                 </div>
 
@@ -1679,17 +2458,14 @@ input[type="file"] {
             <button
                 class="analyze-button"
                 id="analyzeButton"
-                onclick="analyzeImage()"
                 disabled
+                onclick="analyzeImage()"
             >
 
-                🔍 Analyze Scan
+                ✦ Analyze Scan
 
             </button>
 
-
-
-            <!-- STATUS -->
 
             <div class="status">
 
@@ -1700,7 +2476,9 @@ input[type="file"] {
 
 
                 <span id="statusText">
-                    Select an image to begin.
+
+                    Select a scan to begin.
+
                 </span>
 
             </div>
@@ -1711,75 +2489,106 @@ input[type="file"] {
 
 
         <!-- =================================================
-             RESULT CARD
+             RESULT
         ================================================= -->
 
         <div
-            class="card result-card"
+            class="glass result-card tilt"
             id="resultCard"
+            data-tilt
         >
 
 
-            <div class="result-badge">
-                AI CLASSIFICATION
+            <div class="result-top">
+
+
+                <div class="ai-label">
+
+                    AI CLASSIFICATION
+
+                </div>
+
+
+                <div
+                    class="result-time"
+                    id="resultTime"
+                >
+
+                    --
+
+                </div>
+
+
             </div>
 
 
             <div
-                class="prediction"
+                class="prediction prediction-glow"
                 id="prediction"
             >
-                —
+
+                --
+
             </div>
 
 
 
             <!-- CONFIDENCE -->
 
-            <div class="confidence-header">
-
-                <span class="confidence-label">
-                    Model confidence
-                </span>
+            <div class="confidence-box">
 
 
-                <span
-                    class="confidence-value"
-                    id="confidenceText"
-                >
-                    0%
-                </span>
+                <div class="confidence-heading">
+
+                    <span>
+                        Model confidence
+                    </span>
+
+
+                    <span
+                        class="confidence-value"
+                        id="confidenceText"
+                    >
+
+                        0%
+
+                    </span>
+
+                </div>
+
+
+                <div class="confidence-track">
+
+                    <div
+                        class="confidence-fill"
+                        id="confidenceFill"
+                    ></div>
+
+                </div>
+
 
             </div>
 
 
-            <div class="confidence-track">
 
-                <div
-                    class="confidence-fill"
-                    id="confidenceFill"
-                ></div>
+            <!-- CLASSIFICATION -->
 
-            </div>
+            <div class="classification">
 
 
-
-            <!-- =================================================
-                 CLASSIFICATION OVERVIEW
-            ================================================= -->
-
-            <div class="classification-section">
-
-
-                <div class="classification-heading">
+                <div class="classification-header">
 
                     <div class="classification-title">
+
                         Classification Overview
+
                     </div>
 
 
-                    <div class="classification-subtitle">
-                        AI result highlighted
+                    <div class="classification-note">
+
+                        Predicted class highlighted
+
                     </div>
 
                 </div>
@@ -1789,6 +2598,7 @@ input[type="file"] {
                 <div class="class-list">
 
 
+
                     <!-- MENINGIOMA -->
 
                     <div
@@ -1796,25 +2606,25 @@ input[type="file"] {
                         id="card-Meningioma"
                     >
 
-                        <div class="class-top">
+                        <div class="class-main">
 
 
-                            <div class="class-name-wrapper">
-
-                                <div class="class-icon">
-                                    🧠
-                                </div>
+                            <div class="class-icon">
+                                🧠
+                            </div>
 
 
-                                <div class="class-name">
-                                    Meningioma
-                                </div>
+                            <div class="class-name">
+
+                                Meningioma
 
                             </div>
 
 
-                            <div class="predicted-badge">
+                            <div class="predicted-tag">
+
                                 PREDICTED
+
                             </div>
 
 
@@ -1823,16 +2633,17 @@ input[type="file"] {
 
                         <div class="class-description">
 
-                            A tumor that develops from the meninges,
-                            the protective layers surrounding the
-                            brain and spinal cord.
+                            A tumor that develops from the
+                            meninges, the protective layers
+                            surrounding the brain and spinal cord.
 
                         </div>
 
 
-                        <div class="class-confidence">
+                        <div class="class-probability">
 
-                            <div class="class-confidence-header">
+
+                            <div class="probability-top">
 
                                 <span>
                                     Model probability
@@ -1840,7 +2651,7 @@ input[type="file"] {
 
 
                                 <span
-                                    class="class-confidence-value"
+                                    class="probability-value"
                                     id="confidence-Meningioma"
                                 >
                                     0%
@@ -1849,16 +2660,18 @@ input[type="file"] {
                             </div>
 
 
-                            <div class="class-confidence-track">
+                            <div class="probability-track">
 
                                 <div
-                                    class="class-confidence-fill"
+                                    class="probability-fill"
                                     id="fill-Meningioma"
                                 ></div>
 
                             </div>
 
+
                         </div>
+
 
                     </div>
 
@@ -1871,25 +2684,25 @@ input[type="file"] {
                         id="card-Glioma"
                     >
 
-                        <div class="class-top">
+                        <div class="class-main">
 
 
-                            <div class="class-name-wrapper">
-
-                                <div class="class-icon">
-                                    🔬
-                                </div>
+                            <div class="class-icon">
+                                🔬
+                            </div>
 
 
-                                <div class="class-name">
-                                    Glioma
-                                </div>
+                            <div class="class-name">
+
+                                Glioma
 
                             </div>
 
 
-                            <div class="predicted-badge">
+                            <div class="predicted-tag">
+
                                 PREDICTED
+
                             </div>
 
 
@@ -1905,9 +2718,10 @@ input[type="file"] {
                         </div>
 
 
-                        <div class="class-confidence">
+                        <div class="class-probability">
 
-                            <div class="class-confidence-header">
+
+                            <div class="probability-top">
 
                                 <span>
                                     Model probability
@@ -1915,7 +2729,7 @@ input[type="file"] {
 
 
                                 <span
-                                    class="class-confidence-value"
+                                    class="probability-value"
                                     id="confidence-Glioma"
                                 >
                                     0%
@@ -1924,16 +2738,18 @@ input[type="file"] {
                             </div>
 
 
-                            <div class="class-confidence-track">
+                            <div class="probability-track">
 
                                 <div
-                                    class="class-confidence-fill"
+                                    class="probability-fill"
                                     id="fill-Glioma"
                                 ></div>
 
                             </div>
 
+
                         </div>
+
 
                     </div>
 
@@ -1946,25 +2762,25 @@ input[type="file"] {
                         id="card-Pituitary Tumor"
                     >
 
-                        <div class="class-top">
+                        <div class="class-main">
 
 
-                            <div class="class-name-wrapper">
-
-                                <div class="class-icon">
-                                    🧬
-                                </div>
+                            <div class="class-icon">
+                                🧬
+                            </div>
 
 
-                                <div class="class-name">
-                                    Pituitary Tumor
-                                </div>
+                            <div class="class-name">
+
+                                Pituitary Tumor
 
                             </div>
 
 
-                            <div class="predicted-badge">
+                            <div class="predicted-tag">
+
                                 PREDICTED
+
                             </div>
 
 
@@ -1980,9 +2796,10 @@ input[type="file"] {
                         </div>
 
 
-                        <div class="class-confidence">
+                        <div class="class-probability">
 
-                            <div class="class-confidence-header">
+
+                            <div class="probability-top">
 
                                 <span>
                                     Model probability
@@ -1990,7 +2807,7 @@ input[type="file"] {
 
 
                                 <span
-                                    class="class-confidence-value"
+                                    class="probability-value"
                                     id="confidence-Pituitary Tumor"
                                 >
                                     0%
@@ -1999,16 +2816,18 @@ input[type="file"] {
                             </div>
 
 
-                            <div class="class-confidence-track">
+                            <div class="probability-track">
 
                                 <div
-                                    class="class-confidence-fill"
+                                    class="probability-fill"
                                     id="fill-Pituitary Tumor"
                                 ></div>
 
                             </div>
 
+
                         </div>
+
 
                     </div>
 
@@ -2021,25 +2840,25 @@ input[type="file"] {
                         id="card-No Tumor"
                     >
 
-                        <div class="class-top">
+                        <div class="class-main">
 
 
-                            <div class="class-name-wrapper">
-
-                                <div class="class-icon">
-                                    ✓
-                                </div>
+                            <div class="class-icon">
+                                ✓
+                            </div>
 
 
-                                <div class="class-name">
-                                    No Tumor
-                                </div>
+                            <div class="class-name">
+
+                                No Tumor
 
                             </div>
 
 
-                            <div class="predicted-badge">
+                            <div class="predicted-tag">
+
                                 PREDICTED
+
                             </div>
 
 
@@ -2048,15 +2867,17 @@ input[type="file"] {
 
                         <div class="class-description">
 
-                            The image is classified by the trained
-                            model as belonging to the non-tumor class.
+                            The image is classified by the
+                            trained model as belonging to the
+                            non-tumor class.
 
                         </div>
 
 
-                        <div class="class-confidence">
+                        <div class="class-probability">
 
-                            <div class="class-confidence-header">
+
+                            <div class="probability-top">
 
                                 <span>
                                     Model probability
@@ -2064,7 +2885,7 @@ input[type="file"] {
 
 
                                 <span
-                                    class="class-confidence-value"
+                                    class="probability-value"
                                     id="confidence-No Tumor"
                                 >
                                     0%
@@ -2073,27 +2894,28 @@ input[type="file"] {
                             </div>
 
 
-                            <div class="class-confidence-track">
+                            <div class="probability-track">
 
                                 <div
-                                    class="class-confidence-fill"
+                                    class="probability-fill"
                                     id="fill-No Tumor"
                                 ></div>
 
                             </div>
 
+
                         </div>
+
 
                     </div>
 
 
                 </div>
 
+
             </div>
 
 
-
-            <!-- RESET -->
 
             <button
                 class="reset-button"
@@ -2116,20 +2938,27 @@ input[type="file"] {
          HOW IT WORKS
     ================================================= -->
 
-    <div class="card how-card">
+    <div
+        class="glass how-section"
+    >
 
 
-        <div class="card-title">
-            How BrainScan AI Works
+        <div class="section-heading">
+
+            <h2>
+                How it works
+            </h2>
+
+
+            <p>
+                From image to classification in three steps.
+            </p>
+
         </div>
 
 
-        <div class="card-description">
-            Three simple steps from image to AI classification.
-        </div>
 
-
-        <div class="how-grid">
+        <div class="steps">
 
 
             <div class="step">
@@ -2139,17 +2968,18 @@ input[type="file"] {
                 </div>
 
 
-                <div class="step-title">
+                <h3>
                     Upload
-                </div>
+                </h3>
 
 
-                <div class="step-text">
+                <p>
 
-                    Select a brain scan image
-                    from your device.
+                    Select a brain scan image from
+                    your device or drag it into the
+                    upload area.
 
-                </div>
+                </p>
 
             </div>
 
@@ -2162,17 +2992,18 @@ input[type="file"] {
                 </div>
 
 
-                <div class="step-title">
+                <h3>
                     Analyze
-                </div>
+                </h3>
 
 
-                <div class="step-text">
+                <p>
 
-                    The trained AI model processes
-                    the selected image.
+                    The trained Teachable Machine
+                    model processes the image locally
+                    in the browser.
 
-                </div>
+                </p>
 
             </div>
 
@@ -2185,17 +3016,18 @@ input[type="file"] {
                 </div>
 
 
-                <div class="step-title">
-                    Result
-                </div>
+                <h3>
+                    Explore
+                </h3>
 
 
-                <div class="step-text">
+                <p>
 
-                    View the predicted class
-                    and model confidence.
+                    View the predicted class,
+                    confidence and classification
+                    information.
 
-                </div>
+                </p>
 
             </div>
 
@@ -2206,38 +3038,47 @@ input[type="file"] {
     </div>
 
 
-</div>
+</section>
 
 
 
 <!-- =====================================================
-     ABOUT PAGE
+     ABOUT
 ===================================================== -->
 
-<div
+<section
     class="page"
     id="aboutPage"
 >
 
 
-    <div class="about-header">
+    <div class="about-hero">
 
 
-        <div class="hero-badge">
+        <div class="status-pill">
+
+            <span class="status-dot"></span>
+
             ABOUT THE PROJECT
+
         </div>
 
 
-        <h2>
-            About BrainScan AI
-        </h2>
+        <h1>
+
+            Built to explore
+            <span class="gradient-text">
+                AI.
+            </span>
+
+        </h1>
 
 
         <p>
 
-            BrainScan AI is an educational artificial intelligence
-            project designed to demonstrate how image classification
-            can be applied to brain scan images.
+            BrainScan AI is an educational image-classification
+            project exploring how machine learning can be applied
+            to brain scan imagery through an accessible interface.
 
         </p>
 
@@ -2249,26 +3090,28 @@ input[type="file"] {
     <div class="about-grid">
 
 
-        <!-- WHAT IS IT -->
 
-        <div class="about-card">
+        <div
+            class="glass about-card tilt"
+            data-tilt
+        >
 
             <div class="about-icon">
                 🧠
             </div>
 
 
-            <h3>
+            <h2>
                 What is BrainScan AI?
-            </h3>
+            </h2>
 
 
             <p>
 
                 BrainScan AI is an image-classification prototype.
                 A machine-learning model is trained using labelled
-                brain scan images and then used to classify new,
-                previously unseen images.
+                examples and then evaluates new images according
+                to patterns it learned during training.
 
             </p>
 
@@ -2276,26 +3119,28 @@ input[type="file"] {
 
 
 
-        <!-- HOW IT WORKS -->
-
-        <div class="about-card">
+        <div
+            class="glass about-card tilt"
+            data-tilt
+        >
 
             <div class="about-icon">
                 ⚙️
             </div>
 
 
-            <h3>
-                How Does It Work?
-            </h3>
+            <h2>
+                How does it work?
+            </h2>
 
 
             <p>
 
-                When an image is uploaded, the trained model analyzes
-                visual patterns in the image and assigns probabilities
-                to the classes it has learned. The class with the
-                highest probability is displayed as the prediction.
+                When an image is uploaded, the trained model
+                analyzes the image and produces a probability
+                for each of its four learned classes. The class
+                with the highest probability becomes the displayed
+                prediction.
 
             </p>
 
@@ -2303,52 +3148,45 @@ input[type="file"] {
 
 
 
-        <!-- TECHNOLOGY -->
-
-        <div class="about-card">
+        <div
+            class="glass about-card tilt"
+            data-tilt
+        >
 
             <div class="about-icon">
                 💻
             </div>
 
 
-            <h3>
-                Technology Used
-            </h3>
+            <h2>
+                Technology
+            </h2>
 
 
             <div class="tech-list">
 
 
                 <div class="tech-item">
-
-                    <strong>AI Model:</strong>
+                    <strong>AI:</strong>
                     Google Teachable Machine
-
                 </div>
 
 
                 <div class="tech-item">
-
-                    <strong>Model Runtime:</strong>
+                    <strong>Runtime:</strong>
                     TensorFlow.js
-
                 </div>
 
 
                 <div class="tech-item">
-
-                    <strong>Web Interface:</strong>
+                    <strong>Interface:</strong>
                     HTML, CSS & JavaScript
-
                 </div>
 
 
                 <div class="tech-item">
-
-                    <strong>Mobile Application:</strong>
-                    MIT App Inventor
-
+                    <strong>Mobile:</strong>
+                    MIT App Inventor WebViewer
                 </div>
 
 
@@ -2358,83 +3196,27 @@ input[type="file"] {
 
 
 
-        <!-- PURPOSE -->
-
-        <div class="about-card">
+        <div
+            class="glass about-card tilt"
+            data-tilt
+        >
 
             <div class="about-icon">
                 🎯
             </div>
 
 
-            <h3>
-                Project Purpose
-            </h3>
+            <h2>
+                Project Objective
+            </h2>
 
 
             <p>
 
-                The purpose of this project is to explore the use of
-                artificial intelligence and image classification in
-                medical-imaging research. It demonstrates the process
-                from training an AI model to deploying it through a
-                user-friendly application interface.
-
-            </p>
-
-        </div>
-
-
-
-        <!-- MODEL -->
-
-        <div class="about-card">
-
-            <div class="about-icon">
-                🤖
-            </div>
-
-
-            <h3>
-                About the AI Model
-            </h3>
-
-
-            <p>
-
-                The classification model was trained using labelled
-                image examples. During prediction, the model evaluates
-                the uploaded image and produces a probability for each
-                learned class. The displayed confidence represents the
-                model's calculated probability for its prediction.
-
-            </p>
-
-        </div>
-
-
-
-        <!-- LIMITATION -->
-
-        <div class="about-card">
-
-            <div class="about-icon">
-                ⚠️
-            </div>
-
-
-            <h3>
-                Important Limitation
-            </h3>
-
-
-            <p>
-
-                BrainScan AI is an educational and research prototype.
-                Its predictions should not be interpreted as a medical
-                diagnosis. Real clinical diagnosis requires qualified
-                healthcare professionals, appropriate medical imaging
-                protocols, and clinical evaluation.
+                The project demonstrates a complete AI workflow:
+                training an image-classification model, connecting
+                it to a web interface, accepting new images and
+                presenting the model's output in an interactive way.
 
             </p>
 
@@ -2444,7 +3226,37 @@ input[type="file"] {
     </div>
 
 
-</div>
+
+    <!-- MODEL -->
+
+    <div
+        class="glass model-panel"
+    >
+
+
+        <div class="model-header">
+
+            <div class="model-status"></div>
+
+
+            <h2>
+                Connected AI Model
+            </h2>
+
+        </div>
+
+
+        <div class="model-url">
+
+            https://teachablemachine.withgoogle.com/models/XPJn1-s88/
+
+        </div>
+
+
+    </div>
+
+
+</section>
 
 
 
@@ -2452,40 +3264,37 @@ input[type="file"] {
      FOOTER
 ===================================================== -->
 
-<div class="footer">
+<footer class="footer">
 
 
-    <div class="disclaimer">
+    <p>
 
-        <strong>Educational Research Project</strong><br>
+        <strong>BrainScan AI</strong>
+        · AI Image Classification Project
 
-        BrainScan AI provides AI-based image classification
-        for educational and research purposes only.
-        It is not a medical diagnostic tool.
-
-    </div>
+    </p>
 
 
-    BrainScan AI • AI Image Classification Prototype
+    <p>
+
+        Educational and research prototype.
+        Results should not be interpreted as a medical diagnosis.
+
+    </p>
 
 
-</div>
+</footer>
 
 
-</div>
+</main>
 
 
-
-<!-- =====================================================
-     JAVASCRIPT
-===================================================== -->
 
 <script>
 
-
-/* =====================================================
-   YOUR EXISTING TEACHABLE MACHINE MODEL
-===================================================== */
+/* =========================================================
+   TEACHABLE MACHINE MODEL
+========================================================= */
 
 const MODEL_URL =
 "https://teachablemachine.withgoogle.com/models/XPJn1-s88/";
@@ -2496,165 +3305,241 @@ let model = null;
 let imageElement = null;
 
 
-
-/* =====================================================
+/* =========================================================
    PAGE NAVIGATION
-===================================================== */
+========================================================= */
 
 function showPage(page) {
-
 
     const homePage =
         document.getElementById("homePage");
 
-
     const aboutPage =
         document.getElementById("aboutPage");
 
-
     const homeNav =
         document.getElementById("homeNav");
-
 
     const aboutNav =
         document.getElementById("aboutNav");
 
 
-    if(page === "home") {
-
+    if (page === "home") {
 
         homePage.classList.add("active");
 
         aboutPage.classList.remove("active");
 
-
         homeNav.classList.add("active");
 
         aboutNav.classList.remove("active");
-
 
     }
 
     else {
 
-
         homePage.classList.remove("active");
 
         aboutPage.classList.add("active");
-
 
         homeNav.classList.remove("active");
 
         aboutNav.classList.add("active");
 
+    }
+
+
+    window.scrollTo({
+
+        top: 0,
+
+        behavior: "smooth"
+
+    });
+
+}
+
+
+/* =========================================================
+   FILE INPUT
+========================================================= */
+
+const imageInput =
+    document.getElementById("imageInput");
+
+const dropZone =
+    document.getElementById("dropZone");
+
+
+imageInput.addEventListener(
+    "change",
+    handleFile
+);
+
+
+/* =========================================================
+   DRAG AND DROP
+========================================================= */
+
+dropZone.addEventListener(
+    "dragover",
+    function(event) {
+
+        event.preventDefault();
+
+        dropZone.classList.add("dragging");
+
+    }
+);
+
+
+dropZone.addEventListener(
+    "dragleave",
+    function() {
+
+        dropZone.classList.remove("dragging");
+
+    }
+);
+
+
+dropZone.addEventListener(
+    "drop",
+    function(event) {
+
+        event.preventDefault();
+
+        dropZone.classList.remove("dragging");
+
+        const file =
+            event.dataTransfer.files[0];
+
+        if (file) {
+
+            processFile(file);
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CLICK DROP ZONE
+========================================================= */
+
+dropZone.addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            event.target.tagName !== "LABEL" &&
+            event.target.tagName !== "INPUT"
+        ) {
+
+            imageInput.click();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   HANDLE FILE
+========================================================= */
+
+function handleFile(event) {
+
+    const file =
+        event.target.files[0];
+
+    if (file) {
+
+        processFile(file);
 
     }
 
 }
 
 
+/* =========================================================
+   PROCESS IMAGE
+========================================================= */
 
-/* =====================================================
-   IMAGE SELECTION
-===================================================== */
-
-document
-.getElementById("imageInput")
-.addEventListener(
-    "change",
-    function(event) {
+function processFile(file) {
 
 
-        const file =
-            event.target.files[0];
-
-
-        if(!file) {
-
-            return;
-
-        }
-
-
-        const reader =
-            new FileReader();
-
-
-        reader.onload =
-            function(e) {
-
-
-                imageElement =
-                    document.getElementById(
-                        "preview"
-                    );
-
-
-                imageElement.src =
-                    e.target.result;
-
-
-                document
-                    .getElementById(
-                        "previewWrapper"
-                    )
-                    .style.display =
-                    "block";
-
-
-                document
-                    .getElementById(
-                        "analyzeButton"
-                    )
-                    .disabled =
-                    false;
-
-
-                document
-                    .getElementById(
-                        "statusText"
-                    )
-                    .innerText =
-                    "Image ready. Tap Analyze Scan.";
-
-
-                document
-                    .getElementById(
-                        "resultCard"
-                    )
-                    .style.display =
-                    "none";
-
-
-                clearHighlights();
-
-
-            };
-
-
-        reader.readAsDataURL(file);
-
-
-    }
-);
-
-
-
-/* =====================================================
-   ANALYZE IMAGE
-===================================================== */
-
-async function analyzeImage() {
-
-
-    if(!imageElement) {
-
+    if (!file.type.startsWith("image/")) {
 
         document
             .getElementById("statusText")
             .innerText =
-            "Please select an image first.";
+            "Please select an image file.";
 
+        return;
+
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload =
+        function(event) {
+
+
+            imageElement =
+                document.getElementById("preview");
+
+
+            imageElement.src =
+                event.target.result;
+
+
+            document
+                .getElementById("previewWrapper")
+                .style.display =
+                "block";
+
+
+            document
+                .getElementById("analyzeButton")
+                .disabled =
+                false;
+
+
+            document
+                .getElementById("statusText")
+                .innerText =
+                "Scan ready for analysis.";
+
+
+            document
+                .getElementById("resultCard")
+                .style.display =
+                "none";
+
+
+            clearHighlights();
+
+        };
+
+
+    reader.readAsDataURL(file);
+
+}
+
+
+/* =========================================================
+   ANALYZE
+========================================================= */
+
+async function analyzeImage() {
+
+
+    if (!imageElement) {
 
         return;
 
@@ -2662,44 +3547,35 @@ async function analyzeImage() {
 
 
     const button =
-        document
-            .getElementById(
-                "analyzeButton"
-            );
-
+        document.getElementById(
+            "analyzeButton"
+        );
 
     const spinner =
-        document
-            .getElementById(
-                "spinner"
-            );
+        document.getElementById(
+            "spinner"
+        );
 
 
-    button.disabled =
-        true;
+    button.disabled = true;
 
-
-    spinner.style.display =
-        "block";
+    spinner.style.display = "block";
 
 
     document
-        .getElementById(
-            "statusText"
-        )
+        .getElementById("statusText")
         .innerText =
-        "Analyzing scan...";
+        "Loading AI model...";
 
 
     try {
 
 
-        /* ==========================================
-           LOAD YOUR EXISTING MODEL
-        ========================================== */
+        /* ================================================
+           LOAD MODEL
+        ================================================= */
 
-        if(!model) {
-
+        if (!model) {
 
             model =
                 await tmImage.load(
@@ -2715,9 +3591,15 @@ async function analyzeImage() {
         }
 
 
-        /* ==========================================
-           YOUR EXISTING PREDICTION METHOD
-        ========================================== */
+        document
+            .getElementById("statusText")
+            .innerText =
+            "Analyzing image...";
+
+
+        /* ================================================
+           PREDICTION
+        ================================================= */
 
         const predictions =
             await model.predict(
@@ -2725,13 +3607,9 @@ async function analyzeImage() {
             );
 
 
-        /* ==========================================
-           SORT PREDICTIONS
-        ========================================== */
-
         predictions.sort(
 
-            (a,b) =>
+            (a, b) =>
                 b.probability -
                 a.probability
 
@@ -2746,75 +3624,88 @@ async function analyzeImage() {
             best.probability * 100;
 
 
-
-        /* ==========================================
-           MAIN RESULT
-        ========================================== */
+        /* ================================================
+           RESULT
+        ================================================= */
 
         document
-            .getElementById(
-                "prediction"
-            )
+            .getElementById("prediction")
             .innerText =
             best.className;
 
 
         document
-            .getElementById(
-                "confidenceText"
-            )
+            .getElementById("confidenceText")
             .innerText =
-            confidence.toFixed(1) +
-            "%";
+            confidence.toFixed(1) + "%";
 
 
         document
-            .getElementById(
-                "confidenceFill"
-            )
-            .style.width =
-            confidence +
-            "%";
-
-
-        document
-            .getElementById(
-                "resultCard"
-            )
+            .getElementById("resultCard")
             .style.display =
             "block";
 
 
+        document
+            .getElementById("resultTime")
+            .innerText =
+            new Date().toLocaleTimeString(
+                [],
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
 
-        /* ==========================================
-           HIGHLIGHT PREDICTED CLASS
-        ========================================== */
+
+        /* ================================================
+           CONFIDENCE ANIMATION
+        ================================================= */
+
+        setTimeout(
+            function() {
+
+                document
+                    .getElementById(
+                        "confidenceFill"
+                    )
+                    .style.width =
+                    confidence + "%";
+
+            },
+            100
+        );
+
+
+        /* ================================================
+           CLEAR OLD RESULTS
+        ================================================= */
 
         clearHighlights();
 
+
+        /* ================================================
+           HIGHLIGHT WINNER
+        ================================================= */
 
         highlightPrediction(
             best.className
         );
 
 
-
-        /* ==========================================
-           UPDATE ALL CLASS PROBABILITIES
-        ========================================== */
+        /* ================================================
+           UPDATE PROBABILITIES
+        ================================================= */
 
         predictions.forEach(
 
             prediction => {
 
-
                 const className =
                     prediction.className;
 
-
                 const percentage =
-                    prediction.probability *
-                    100;
+                    prediction.probability * 100;
 
 
                 const confidenceElement =
@@ -2831,7 +3722,7 @@ async function analyzeImage() {
                     );
 
 
-                if(confidenceElement) {
+                if (confidenceElement) {
 
                     confidenceElement.innerText =
                         percentage.toFixed(1) +
@@ -2840,14 +3731,19 @@ async function analyzeImage() {
                 }
 
 
-                if(fillElement) {
+                if (fillElement) {
 
-                    fillElement.style.width =
-                        percentage +
-                        "%";
+                    setTimeout(
+                        function() {
+
+                            fillElement.style.width =
+                                percentage + "%";
+
+                        },
+                        150
+                    );
 
                 }
-
 
             }
 
@@ -2855,28 +3751,48 @@ async function analyzeImage() {
 
 
         document
-            .getElementById(
-                "statusText"
-            )
+            .getElementById("statusText")
             .innerText =
             "Analysis complete.";
 
 
+        /* ================================================
+           SMALL SCREEN SCROLL
+        ================================================= */
+
+        if (window.innerWidth < 800) {
+
+            setTimeout(
+                function() {
+
+                    document
+                        .getElementById(
+                            "resultCard"
+                        )
+                        .scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+
+                },
+                250
+            );
+
+        }
+
+
     }
 
-
-    catch(error) {
+    catch (error) {
 
 
         console.error(error);
 
 
         document
-            .getElementById(
-                "statusText"
-            )
+            .getElementById("statusText")
             .innerText =
-            "Unable to analyze this image. Please try again.";
+            "Analysis failed. Please try another image.";
 
 
     }
@@ -2889,14 +3805,12 @@ async function analyzeImage() {
     button.disabled =
         false;
 
-
 }
 
 
-
-/* =====================================================
+/* =========================================================
    HIGHLIGHT PREDICTION
-===================================================== */
+========================================================= */
 
 function highlightPrediction(className) {
 
@@ -2907,85 +3821,87 @@ function highlightPrediction(className) {
         );
 
 
-    if(card) {
+    if (!card) {
 
-
-        card.classList.add(
-            "predicted"
+        console.warn(
+            "No classification card found for:",
+            className
         );
 
-
-        setTimeout(
-
-            function() {
-
-                card.scrollIntoView({
-
-                    behavior: "smooth",
-
-                    block: "nearest"
-
-                });
-
-            },
-
-            150
-
-        );
+        return;
 
     }
+
+
+    card.classList.add(
+        "predicted"
+    );
+
+
+    setTimeout(
+        function() {
+
+            card.scrollIntoView({
+
+                behavior: "smooth",
+
+                block: "nearest"
+
+            });
+
+        },
+        200
+    );
 
 }
 
 
-
-/* =====================================================
+/* =========================================================
    CLEAR HIGHLIGHTS
-===================================================== */
+========================================================= */
 
 function clearHighlights() {
 
 
-    const cards =
-        document.querySelectorAll(
-            ".class-card"
+    document
+        .querySelectorAll(".class-card")
+        .forEach(
+            card => {
+
+                card.classList.remove(
+                    "predicted"
+                );
+
+            }
         );
 
 
-    cards.forEach(
+    document
+        .querySelectorAll(".probability-fill")
+        .forEach(
+            fill => {
 
-        card => {
+                fill.style.width =
+                    "0%";
 
-            card.classList.remove(
-                "predicted"
-            );
-
-        }
-
-    );
+            }
+        );
 
 
 }
 
 
-
-/* =====================================================
+/* =========================================================
    RESET
-===================================================== */
+========================================================= */
 
 function resetScan() {
 
 
-    document
-        .getElementById(
-            "imageInput"
-        )
-        .value =
-        "";
+    imageInput.value = "";
 
 
-    imageElement =
-        null;
+    imageElement = null;
 
 
     document
@@ -3017,7 +3933,7 @@ function resetScan() {
             "statusText"
         )
         .innerText =
-        "Select an image to begin.";
+        "Select a scan to begin.";
 
 
     document
@@ -3030,8 +3946,566 @@ function resetScan() {
 
     clearHighlights();
 
+}
+
+
+/* =========================================================
+   CURSOR GLOW
+========================================================= */
+
+const cursorGlow =
+    document.getElementById(
+        "cursorGlow"
+    );
+
+
+let mouseX = window.innerWidth / 2;
+
+let mouseY = window.innerHeight / 2;
+
+
+document.addEventListener(
+    "mousemove",
+    function(event) {
+
+        mouseX = event.clientX;
+
+        mouseY = event.clientY;
+
+
+        cursorGlow.style.left =
+            mouseX + "px";
+
+
+        cursorGlow.style.top =
+            mouseY + "px";
+
+    }
+);
+
+
+/* =========================================================
+   INTERACTIVE TILT CARDS
+========================================================= */
+
+const tiltCards =
+    document.querySelectorAll(
+        "[data-tilt]"
+    );
+
+
+tiltCards.forEach(
+    card => {
+
+
+        card.addEventListener(
+            "mousemove",
+            function(event) {
+
+
+                if (window.innerWidth < 800) {
+
+                    return;
+
+                }
+
+
+                const rect =
+                    card.getBoundingClientRect();
+
+
+                const x =
+                    event.clientX -
+                    rect.left;
+
+
+                const y =
+                    event.clientY -
+                    rect.top;
+
+
+                const centerX =
+                    rect.width / 2;
+
+
+                const centerY =
+                    rect.height / 2;
+
+
+                const rotateX =
+                    ((y - centerY) /
+                    centerY) *
+                    -2.5;
+
+
+                const rotateY =
+                    ((x - centerX) /
+                    centerX) *
+                    2.5;
+
+
+                card.style.transform =
+                    `perspective(900px)
+                     rotateX(${rotateX}deg)
+                     rotateY(${rotateY}deg)
+                     translateY(-2px)`;
+
+            }
+        );
+
+
+        card.addEventListener(
+            "mouseleave",
+            function() {
+
+                card.style.transform =
+                    "";
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   INTERACTIVE PARTICLE / NEURAL BACKGROUND
+========================================================= */
+
+const canvas =
+    document.getElementById(
+        "backgroundCanvas"
+    );
+
+
+const ctx =
+    canvas.getContext("2d");
+
+
+let particles = [];
+
+
+let canvasWidth;
+
+let canvasHeight;
+
+
+function resizeCanvas() {
+
+    canvasWidth =
+        canvas.width =
+        window.innerWidth;
+
+    canvasHeight =
+        canvas.height =
+        window.innerHeight;
+
+
+    createParticles();
 
 }
+
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+
+class Particle {
+
+
+    constructor() {
+
+        this.x =
+            Math.random() *
+            canvasWidth;
+
+        this.y =
+            Math.random() *
+            canvasHeight;
+
+        this.vx =
+            (Math.random() - .5) *
+            .35;
+
+        this.vy =
+            (Math.random() - .5) *
+            .35;
+
+        this.size =
+            Math.random() *
+            1.7 + .4;
+
+        this.opacity =
+            Math.random() *
+            .55 + .15;
+
+    }
+
+
+    update() {
+
+
+        this.x += this.vx;
+
+        this.y += this.vy;
+
+
+        if (
+            this.x < 0 ||
+            this.x > canvasWidth
+        ) {
+
+            this.vx *= -1;
+
+        }
+
+
+        if (
+            this.y < 0 ||
+            this.y > canvasHeight
+        ) {
+
+            this.vy *= -1;
+
+        }
+
+
+        /* Cursor interaction */
+
+        const dx =
+            this.x - mouseX;
+
+        const dy =
+            this.y - mouseY;
+
+        const distance =
+            Math.sqrt(
+                dx * dx +
+                dy * dy
+            );
+
+
+        const interactionRadius =
+            170;
+
+
+        if (
+            distance <
+            interactionRadius
+        ) {
+
+
+            const force =
+                (interactionRadius -
+                distance) /
+                interactionRadius;
+
+
+            this.x +=
+                (dx / distance) *
+                force *
+                .7;
+
+
+            this.y +=
+                (dy / distance) *
+                force *
+                .7;
+
+        }
+
+    }
+
+
+    draw() {
+
+
+        ctx.beginPath();
+
+
+        ctx.arc(
+            this.x,
+            this.y,
+            this.size,
+            0,
+            Math.PI * 2
+        );
+
+
+        ctx.fillStyle =
+            `rgba(96,165,250,${this.opacity})`;
+
+
+        ctx.fill();
+
+    }
+
+}
+
+
+/* =========================================================
+   PARTICLE CREATION
+========================================================= */
+
+function createParticles() {
+
+
+    particles = [];
+
+
+    const amount =
+        Math.min(
+            115,
+            Math.floor(
+                (canvasWidth *
+                canvasHeight) /
+                11000
+            )
+        );
+
+
+    for (
+        let i = 0;
+        i < amount;
+        i++
+    ) {
+
+        particles.push(
+            new Particle()
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DRAW CONNECTIONS
+========================================================= */
+
+function drawConnections() {
+
+
+    for (
+        let i = 0;
+        i < particles.length;
+        i++
+    ) {
+
+
+        for (
+            let j = i + 1;
+            j < particles.length;
+            j++
+        ) {
+
+
+            const a =
+                particles[i];
+
+            const b =
+                particles[j];
+
+
+            const dx =
+                a.x - b.x;
+
+            const dy =
+                a.y - b.y;
+
+
+            const distance =
+                Math.sqrt(
+                    dx * dx +
+                    dy * dy
+                );
+
+
+            if (
+                distance < 105
+            ) {
+
+
+                const opacity =
+                    (1 -
+                    distance / 105) *
+                    .13;
+
+
+                ctx.beginPath();
+
+
+                ctx.moveTo(
+                    a.x,
+                    a.y
+                );
+
+
+                ctx.lineTo(
+                    b.x,
+                    b.y
+                );
+
+
+                ctx.strokeStyle =
+                    `rgba(96,165,250,${opacity})`;
+
+
+                ctx.lineWidth =
+                    .6;
+
+
+                ctx.stroke();
+
+            }
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   CURSOR CONNECTIONS
+========================================================= */
+
+function drawCursorConnections() {
+
+
+    particles.forEach(
+        particle => {
+
+
+            const dx =
+                particle.x -
+                mouseX;
+
+
+            const dy =
+                particle.y -
+                mouseY;
+
+
+            const distance =
+                Math.sqrt(
+                    dx * dx +
+                    dy * dy
+                );
+
+
+            if (
+                distance < 150
+            ) {
+
+
+                const opacity =
+                    (1 -
+                    distance / 150) *
+                    .28;
+
+
+                ctx.beginPath();
+
+
+                ctx.moveTo(
+                    particle.x,
+                    particle.y
+                );
+
+
+                ctx.lineTo(
+                    mouseX,
+                    mouseY
+                );
+
+
+                ctx.strokeStyle =
+                    `rgba(129,140,248,${opacity})`;
+
+
+                ctx.lineWidth =
+                    .7;
+
+
+                ctx.stroke();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ANIMATION LOOP
+========================================================= */
+
+function animateBackground() {
+
+
+    ctx.clearRect(
+        0,
+        0,
+        canvasWidth,
+        canvasHeight
+    );
+
+
+    particles.forEach(
+        particle => {
+
+            particle.update();
+
+            particle.draw();
+
+        }
+    );
+
+
+    drawConnections();
+
+    drawCursorConnections();
+
+
+    requestAnimationFrame(
+        animateBackground
+    );
+
+}
+
+
+/* =========================================================
+   START BACKGROUND
+========================================================= */
+
+resizeCanvas();
+
+animateBackground();
+
+
+/* =========================================================
+   KEYBOARD SHORTCUT
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            resetScan();
+
+        }
+
+    }
+);
 
 </script>
 
@@ -3039,4 +4513,3 @@ function resetScan() {
 </body>
 
 </html>
-```
