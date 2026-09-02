@@ -1371,51 +1371,53 @@
          */
 
         #brainScan-chatbot {
+            position: relative;
+
+            width: 100%;
+            height: 100%;
+        }
+
+
+        /* =====================================================
+           MIT APP INVENTOR WEBVIEW — BOTPRESS FIX
+           Desktop/laptop behavior is unchanged.
+        ====================================================== */
+        body.mit-app-inventor-webview #brainScan-chatbot {
             position: relative !important;
             width: 100% !important;
             height: 100% !important;
-            min-height: 0 !important;
             overflow: hidden !important;
         }
 
-        /* Force Botpress Webchat to behave as an embedded panel.
-           This is especially important inside MIT App Inventor's WebViewer,
-           where Botpress can otherwise fall back to the floating launcher. */
-        #brainScan-chatbot .bpWebchat {
-            position: absolute !important;
-            inset: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            max-width: 100% !important;
-            max-height: 100% !important;
+        body.mit-app-inventor-webview .bpFab,
+        body.mit-app-inventor-webview .bpFabWrapper,
+        body.mit-app-inventor-webview .bp-fab,
+        body.mit-app-inventor-webview [class*="bpFab"] {
+            display: none !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+
+        body.mit-app-inventor-webview .bpWebchat {
+            position: fixed !important;
+            margin: 0 !important;
+            width: var(--bp-webview-width, 100vw) !important;
+            height: var(--bp-webview-height, 100vh) !important;
+            max-width: none !important;
+            max-height: none !important;
             min-width: 0 !important;
             min-height: 0 !important;
-            border-radius: 22px !important;
-            z-index: 10 !important;
+            border-radius: 0 !important;
+            right: auto !important;
+            bottom: auto !important;
+            z-index: 999999 !important;
         }
 
-        /* Hide the floating launcher only when it is generated alongside
-           the embedded chatbot. */
-        #brainScan-chatbot .bpFab,
-        #brainScan-chatbot .bpFabContainer {
-            display: none !important;
-        }
-
-        /* If Botpress places the launcher outside our container, hide the
-           global FAB while this page is being viewed in an App Inventor
-           WebViewer. The body class is added by the script below. */
-        body.mit-app-inventor .bpFab,
-        body.mit-app-inventor .bpFabContainer {
-            display: none !important;
-        }
-
-        body.mit-app-inventor .bpWebchat {
-            position: absolute !important;
-            inset: 0 !important;
+        body.mit-app-inventor-webview .bpContainer {
             width: 100% !important;
             height: 100% !important;
-            max-width: 100% !important;
-            max-height: 100% !important;
+            max-width: none !important;
+            max-height: none !important;
         }
 
         /* =====================================================
@@ -3797,59 +3799,102 @@
             );
 
 
+
+
         /* =====================================================
-           MIT APP INVENTOR WEBVIEW COMPATIBILITY
+           MIT APP INVENTOR / ANDROID WEBVIEW BOTPRESS HANDLER
+
+           Botpress can render its mobile FAB/toggle in WebViews.
+           In the MIT App Inventor Companion we instead force the
+           Webchat window into the existing BrainScan container.
+           Normal desktop/laptop browsers are NOT affected.
         ====================================================== */
-
-        (function () {
+        (function setupMITWebViewBotpress() {
             const ua = navigator.userAgent || "";
+            const isMITWebView =
+                /AppInventor|MITAppInventor|MIT-App-Inventor/i.test(ua) ||
+                (/Android/i.test(ua) && /; wv\)/i.test(ua));
 
-            /* MIT App Inventor Companion/WebViewer identifiers can vary
-               by Android/WebView version, so check several reliable hints. */
-            const isMITAppInventor =
-                /MITAppInventor|MIT-App-Inventor|AppInventor/i.test(ua) ||
-                /Kodular/i.test(ua) ||
-                (window.AppInventor && typeof window.AppInventor === "object");
+            if (!isMITWebView) return;
 
-            if (isMITAppInventor) {
-                document.body.classList.add("mit-app-inventor");
-            }
+            document.body.classList.add("mit-app-inventor-webview");
 
-            function forceEmbeddedBotpress() {
-                const host = document.getElementById("brainScan-chatbot");
-                if (!host) return;
+            const container = document.getElementById("brainScan-chatbot");
+            if (!container) return;
 
-                const chat = host.querySelector(".bpWebchat");
-                if (chat) {
-                    chat.style.setProperty("position", "absolute", "important");
-                    chat.style.setProperty("inset", "0", "important");
-                    chat.style.setProperty("width", "100%", "important");
-                    chat.style.setProperty("height", "100%", "important");
-                    chat.style.setProperty("max-width", "100%", "important");
-                    chat.style.setProperty("max-height", "100%", "important");
+            function positionBotpress() {
+                const chat = document.querySelector(".bpWebchat");
+                const fab = document.querySelector(".bpFab, .bpFabWrapper, .bp-fab");
+                const rect = container.getBoundingClientRect();
+
+                document.documentElement.style.setProperty(
+                    "--bp-webview-width",
+                    Math.max(1, rect.width) + "px"
+                );
+                document.documentElement.style.setProperty(
+                    "--bp-webview-height",
+                    Math.max(1, rect.height) + "px"
+                );
+
+                if (fab) {
+                    fab.style.setProperty("display", "none", "important");
+                    fab.style.setProperty("visibility", "hidden", "important");
                 }
 
-                host.querySelectorAll(".bpFab, .bpFabContainer").forEach(el => {
-                    el.style.setProperty("display", "none", "important");
-                });
+                if (chat) {
+                    chat.style.setProperty("left", rect.left + "px", "important");
+                    chat.style.setProperty("top", rect.top + "px", "important");
+                    chat.style.setProperty("right", "auto", "important");
+                    chat.style.setProperty("bottom", "auto", "important");
+                    chat.style.setProperty("width", rect.width + "px", "important");
+                    chat.style.setProperty("height", rect.height + "px", "important");
+                    chat.style.setProperty("max-width", "none", "important");
+                    chat.style.setProperty("max-height", "none", "important");
+                    chat.style.setProperty("border-radius", "0", "important");
+                    chat.style.setProperty("z-index", "999999", "important");
+                }
             }
 
-            /* Botpress may inject its DOM after the page loads. */
-            const observer = new MutationObserver(forceEmbeddedBotpress);
-            observer.observe(document.documentElement, { childList: true, subtree: true });
+            function openAndPosition() {
+                try {
+                    if (window.botpress && typeof window.botpress.open === "function") {
+                        window.botpress.open();
+                    }
+                } catch (e) {
+                    console.warn("BrainScan AI: Botpress open failed", e);
+                }
+                positionBotpress();
+            }
 
-            document.addEventListener("DOMContentLoaded", forceEmbeddedBotpress);
-            window.addEventListener("load", forceEmbeddedBotpress);
-
+            // Botpress exposes this event after its UI has been created.
             if (window.botpress && typeof window.botpress.on === "function") {
-                window.botpress.on("webchat:initialized", function () {
-                    forceEmbeddedBotpress();
-                    setTimeout(forceEmbeddedBotpress, 250);
-                    setTimeout(forceEmbeddedBotpress, 1000);
-                });
+                try {
+                    window.botpress.on("webchat:initialized", openAndPosition);
+                } catch (e) {}
             }
-        })();
 
+            // Catch initialization even if Botpress loads after this script.
+            let attempts = 0;
+            const timer = setInterval(function() {
+                attempts++;
+                if (window.botpress) openAndPosition();
+                if (document.querySelector(".bpWebchat")) {
+                    positionBotpress();
+                    clearInterval(timer);
+                }
+                if (attempts > 40) clearInterval(timer);
+            }, 250);
+
+            window.addEventListener("resize", positionBotpress, { passive: true });
+            window.addEventListener("scroll", positionBotpress, { passive: true });
+
+            // Botpress may recreate its DOM after opening; keep the container
+            // styling applied whenever that happens.
+            const botpressObserver = new MutationObserver(function() {
+                positionBotpress();
+            });
+            botpressObserver.observe(document.body, { childList: true, subtree: true });
+        })();
 
         /* =====================================================
            INITIALIZE
