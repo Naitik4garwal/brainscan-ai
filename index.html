@@ -1323,101 +1323,90 @@
             position: relative;
         }
 
-        .assistant-shell {
-            max-width: 1000px;
-
-            margin: auto;
-
-            padding: 10px;
-
-            border-radius: 30px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(104,119,255,0.20),
-                    rgba(36,216,255,0.09),
-                    rgba(157,124,255,0.14)
-                );
-
-            box-shadow:
-                0 35px 100px rgba(0,0,0,0.35);
-        }
-
-        .assistant-container {
-            position: relative;
-
-            width: 100%;
-
-            height: 680px;
-
-            border-radius: 23px;
-
-            overflow: hidden;
-
-            background:
-                rgba(7,12,29,0.96);
-
+        .assistant-card {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 34px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, rgba(104,119,255,0.16), rgba(36,216,255,0.08), rgba(157,124,255,0.12));
             border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.28);
+            text-align: center;
         }
 
-        /*
-         * IMPORTANT:
-         *
-         * This ID MUST MATCH the Element ID configured
-         * in Botpress:
-         *
-         * brainScan-chatbot
-         */
-
-        #brainScan-chatbot {
-            position: relative;
-
-            width: 100%;
-            height: 100%;
+        .assistant-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 22px;
+            background: rgba(104,119,255,0.16);
+            border: 1px solid rgba(104,119,255,0.28);
+            font-size: 30px;
         }
 
-
-        /* =====================================================
-           MIT APP INVENTOR WEBVIEW — BOTPRESS FIX
-           Desktop/laptop behavior is unchanged.
-        ====================================================== */
-        body.mit-app-inventor-webview #brainScan-chatbot {
-            position: relative !important;
-            width: 100% !important;
-            height: 100% !important;
-            overflow: hidden !important;
+        .assistant-card h3 {
+            margin: 0 0 10px;
+            font-size: 24px;
         }
 
-        body.mit-app-inventor-webview .bpFab,
-        body.mit-app-inventor-webview .bpFabWrapper,
-        body.mit-app-inventor-webview .bp-fab,
-        body.mit-app-inventor-webview [class*="bpFab"] {
-            display: none !important;
-            visibility: hidden !important;
-            pointer-events: none !important;
+        .assistant-card p {
+            max-width: 650px;
+            margin: 0 auto 22px;
+            color: var(--muted);
+            line-height: 1.7;
         }
 
-        body.mit-app-inventor-webview .bpWebchat {
-            position: fixed !important;
-            margin: 0 !important;
-            width: var(--bp-webview-width, 100vw) !important;
-            height: var(--bp-webview-height, 100vh) !important;
-            max-width: none !important;
-            max-height: none !important;
-            min-width: 0 !important;
-            min-height: 0 !important;
-            border-radius: 0 !important;
-            right: auto !important;
-            bottom: auto !important;
-            z-index: 999999 !important;
+        .assistant-chat-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 11px;
+            min-width: 270px;
+            padding: 15px 22px;
+            margin: 2px 0 18px;
+            border: 1px solid rgba(104,119,255,0.42);
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(104,119,255,0.28), rgba(36,216,255,0.16));
+            color: var(--text);
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.18);
         }
 
-        body.mit-app-inventor-webview .bpContainer {
-            width: 100% !important;
-            height: 100% !important;
-            max-width: none !important;
-            max-height: none !important;
+        .assistant-chat-button:hover {
+            transform: translateY(-2px);
+            border-color: rgba(36,216,255,0.65);
+            box-shadow: 0 16px 36px rgba(0,0,0,0.25);
+        }
+
+        .assistant-chat-button:active {
+            transform: translateY(0);
+        }
+
+        .assistant-chat-button-icon {
+            font-size: 20px;
+        }
+
+        .assistant-chat-button-arrow {
+            font-size: 19px;
+            opacity: .8;
+        }
+
+        .assistant-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 11px 16px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.09);
+            color: var(--text);
+            font-size: 13px;
         }
 
         /* =====================================================
@@ -2517,31 +2506,32 @@
                 </div>
 
 
-                <div class="assistant-shell reveal">
+                <div class="assistant-card reveal">
 
-                    <div class="assistant-container">
+                    <div class="assistant-icon">🤖</div>
 
-                        <!--
-                            BOTPRESS EMBEDDED CONTAINER
+                    <h3>Chat with BrainScan AI</h3>
 
-                            IMPORTANT:
-                            This ID must exactly match the
-                            Element ID configured in Botpress.
+                    <p>
+                        Have a question about BrainScan AI, the MRI image
+                        classifications, the AI model, confidence scores,
+                        or how the scanner works? Open the BrainScan AI
+                        Assistant using the chat button.
+                    </p>
 
-                            Botpress:
-                            Webchat
-                            → Deploy Settings
-                            → Chat interface
-                            → Embedded
-                            → Element ID
+                    <button
+                        id="brainScanChatButton"
+                        class="assistant-chat-button"
+                        type="button"
+                        aria-label="Open BrainScan AI Assistant">
+                        <span class="assistant-chat-button-icon">💬</span>
+                        <span>Open BrainScan AI Assistant</span>
+                        <span class="assistant-chat-button-arrow">→</span>
+                    </button>
 
-                            Set it to:
-
-                            brainScan-chatbot
-                        -->
-
-                        <div id="brainScan-chatbot"></div>
-
+                    <div class="assistant-hint">
+                        <span>✨</span>
+                        <span>Powered by BrainScan AI</span>
                     </div>
 
                 </div>
@@ -2732,6 +2722,27 @@
     ========================================================== -->
 
     <script>
+
+        /* =====================================================
+           BOTPRESS CUSTOM ELEMENT
+           The Botpress dashboard should be set to:
+           Chat Interface: Toggle
+           Chat Launcher: Custom element
+           Element Selector: brainScanChatButton
+        ====================================================== */
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const chatButton = document.getElementById("brainScanChatButton");
+
+            if (chatButton) {
+                chatButton.addEventListener("click", () => {
+                    if (window.botpress && typeof window.botpress.toggle === "function") {
+                        window.botpress.toggle();
+                    }
+                });
+            }
+        });
+
 
         /* =====================================================
            TEACHABLE MACHINE MODEL
@@ -3798,103 +3809,6 @@
                 }
             );
 
-
-
-
-        /* =====================================================
-           MIT APP INVENTOR / ANDROID WEBVIEW BOTPRESS HANDLER
-
-           Botpress can render its mobile FAB/toggle in WebViews.
-           In the MIT App Inventor Companion we instead force the
-           Webchat window into the existing BrainScan container.
-           Normal desktop/laptop browsers are NOT affected.
-        ====================================================== */
-        (function setupMITWebViewBotpress() {
-            const ua = navigator.userAgent || "";
-            const isMITWebView =
-                /AppInventor|MITAppInventor|MIT-App-Inventor/i.test(ua) ||
-                (/Android/i.test(ua) && /; wv\)/i.test(ua));
-
-            if (!isMITWebView) return;
-
-            document.body.classList.add("mit-app-inventor-webview");
-
-            const container = document.getElementById("brainScan-chatbot");
-            if (!container) return;
-
-            function positionBotpress() {
-                const chat = document.querySelector(".bpWebchat");
-                const fab = document.querySelector(".bpFab, .bpFabWrapper, .bp-fab");
-                const rect = container.getBoundingClientRect();
-
-                document.documentElement.style.setProperty(
-                    "--bp-webview-width",
-                    Math.max(1, rect.width) + "px"
-                );
-                document.documentElement.style.setProperty(
-                    "--bp-webview-height",
-                    Math.max(1, rect.height) + "px"
-                );
-
-                if (fab) {
-                    fab.style.setProperty("display", "none", "important");
-                    fab.style.setProperty("visibility", "hidden", "important");
-                }
-
-                if (chat) {
-                    chat.style.setProperty("left", rect.left + "px", "important");
-                    chat.style.setProperty("top", rect.top + "px", "important");
-                    chat.style.setProperty("right", "auto", "important");
-                    chat.style.setProperty("bottom", "auto", "important");
-                    chat.style.setProperty("width", rect.width + "px", "important");
-                    chat.style.setProperty("height", rect.height + "px", "important");
-                    chat.style.setProperty("max-width", "none", "important");
-                    chat.style.setProperty("max-height", "none", "important");
-                    chat.style.setProperty("border-radius", "0", "important");
-                    chat.style.setProperty("z-index", "999999", "important");
-                }
-            }
-
-            function openAndPosition() {
-                try {
-                    if (window.botpress && typeof window.botpress.open === "function") {
-                        window.botpress.open();
-                    }
-                } catch (e) {
-                    console.warn("BrainScan AI: Botpress open failed", e);
-                }
-                positionBotpress();
-            }
-
-            // Botpress exposes this event after its UI has been created.
-            if (window.botpress && typeof window.botpress.on === "function") {
-                try {
-                    window.botpress.on("webchat:initialized", openAndPosition);
-                } catch (e) {}
-            }
-
-            // Catch initialization even if Botpress loads after this script.
-            let attempts = 0;
-            const timer = setInterval(function() {
-                attempts++;
-                if (window.botpress) openAndPosition();
-                if (document.querySelector(".bpWebchat")) {
-                    positionBotpress();
-                    clearInterval(timer);
-                }
-                if (attempts > 40) clearInterval(timer);
-            }, 250);
-
-            window.addEventListener("resize", positionBotpress, { passive: true });
-            window.addEventListener("scroll", positionBotpress, { passive: true });
-
-            // Botpress may recreate its DOM after opening; keep the container
-            // styling applied whenever that happens.
-            const botpressObserver = new MutationObserver(function() {
-                positionBotpress();
-            });
-            botpressObserver.observe(document.body, { childList: true, subtree: true });
-        })();
 
         /* =====================================================
            INITIALIZE
