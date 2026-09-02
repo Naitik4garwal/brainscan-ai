@@ -2724,24 +2724,99 @@
     <script>
 
         /* =====================================================
-           BOTPRESS CUSTOM ELEMENT
-           The Botpress dashboard should be set to:
-           Chat Interface: Toggle
-           Chat Launcher: Custom element
-           Element Selector: brainScanChatButton
+           BOTPRESS CUSTOM CHAT BUTTON
+           This button controls Botpress directly.
+           Botpress Dashboard: Chat Interface = Toggle
+           The default Botpress bubble can remain disabled/hidden.
         ====================================================== */
 
-        document.addEventListener("DOMContentLoaded", () => {
-            const chatButton = document.getElementById("brainScanChatButton");
+        (function () {
+            let chatButton;
+            let botpressReady = false;
 
-            if (chatButton) {
-                chatButton.addEventListener("click", () => {
-                    if (window.botpress && typeof window.botpress.toggle === "function") {
-                        window.botpress.toggle();
+            function hideDefaultBotpressBubble() {
+                const style = document.getElementById("brainscan-botpress-hide-style");
+                if (style) return;
+
+                const s = document.createElement("style");
+                s.id = "brainscan-botpress-hide-style";
+                s.textContent = `
+                    .bpFab,
+                    .bpFabWrapper,
+                    [class*="bpFab"],
+                    [class*="bp-fab"] {
+                        display: none !important;
+                        visibility: hidden !important;
+                    }
+                `;
+                document.head.appendChild(s);
+            }
+
+            function tryOpenBotpress() {
+                if (window.botpress && typeof window.botpress.toggle === "function") {
+                    window.botpress.toggle();
+                    return true;
+                }
+                if (window.botpress && typeof window.botpress.open === "function") {
+                    window.botpress.open();
+                    return true;
+                }
+                return false;
+            }
+
+            function setupChatButton() {
+                chatButton = document.getElementById("brainScanChatButton");
+                if (!chatButton || chatButton.dataset.botpressReady === "true") return;
+
+                chatButton.dataset.botpressReady = "true";
+                hideDefaultBotpressBubble();
+
+                chatButton.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    // Botpress may still be loading inside MIT App Inventor WebViewer.
+                    // Wait briefly and retry instead of doing nothing.
+                    if (!tryOpenBotpress()) {
+                        let attempts = 0;
+                        const timer = setInterval(function () {
+                            attempts++;
+                            if (tryOpenBotpress() || attempts >= 30) {
+                                clearInterval(timer);
+                            }
+                        }, 250);
                     }
                 });
             }
-        });
+
+            // The button is present after the HTML loads.
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", setupChatButton);
+            } else {
+                setupChatButton();
+            }
+
+            // Botpress exposes this event once Webchat is initialized.
+            const waitForBotpress = setInterval(function () {
+                if (window.botpress) {
+                    botpressReady = true;
+                    hideDefaultBotpressBubble();
+                    setupChatButton();
+                    clearInterval(waitForBotpress);
+
+                    if (typeof window.botpress.on === "function") {
+                        window.botpress.on("webchat:initialized", function () {
+                            hideDefaultBotpressBubble();
+                        });
+                    }
+                }
+            }, 250);
+
+            // Safety timeout so the page never keeps checking forever.
+            setTimeout(function () {
+                clearInterval(waitForBotpress);
+            }, 20000);
+        })();
 
 
         /* =====================================================
